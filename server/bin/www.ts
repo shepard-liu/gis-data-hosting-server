@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('data-server:server');
-var http = require('http');
+import { app } from '../app';
+import { debug } from 'debug';
+import * as http from 'http';
 
 /**
  * Get port from environment and store in Express.
@@ -25,7 +25,12 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+// TODO: enable https
+var hostname: string = 'localhost';
+
+server.listen(port, 'localhost', () => {
+  console.log(`Server listening on ${hostname}:${port}`);
+});
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -86,5 +91,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  debug('data-server:server')('Listening on ' + bind);
 }
