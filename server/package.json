@@ -1,0 +1,31 @@
+{
+  "name": "gis-data-hosting-server",
+  "version": "1.0.0",
+  "description": "A GIS data hosting server built on Node.js. Providing GIS data preview and download service for ordinary users and upload/modification service for administrators.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shepard-liu/gis-data-hosting-server/"
+  },
+  "keywords": [
+    "gis",
+    "data",
+    "hosting",
+    "server"
+  ],
+  "author": "shepard-liu",
+  "license": "MIT",
+
+  "private": true,
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1"
+  }
+}
