@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-10-22T09:15:08.387Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edg/94.0.992.50" etag="Js2rAisrZ_4dXsf2uOwu" version="15.5.8" type="github">
+<mxfile host="app.diagrams.net" modified="2021-10-22T09:16:18.784Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edg/94.0.992.50" etag="BAFpzt_5jP1XkHpkQViK" version="15.5.8" type="github">
   <diagram name="Page-1" id="74e2e168-ea6b-b213-b513-2b3c1d86103e">
     <mxGraphModel dx="1008" dy="528" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
@@ -104,12 +104,12 @@
             <mxRectangle width="119" height="75" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4V-mr4IqMZc0FdnWw5-l-64" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;pointerEvents=1;align=center;" vertex="1" parent="4V-mr4IqMZc0FdnWw5-l-51">
+        <mxCell id="4V-mr4IqMZc0FdnWw5-l-64" value="&lt;span&gt;Reserved for preview service.&lt;/span&gt;&lt;br&gt;&lt;span&gt;The item ID of the layer used by ArcGIS Online&lt;/span&gt;" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;pointerEvents=1;align=center;" vertex="1" parent="4V-mr4IqMZc0FdnWw5-l-51">
           <mxGeometry x="354" width="118" height="75" as="geometry">
             <mxRectangle width="118" height="75" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4V-mr4IqMZc0FdnWw5-l-67" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;pointerEvents=1;align=center;" vertex="1" parent="4V-mr4IqMZc0FdnWw5-l-51">
+        <mxCell id="4V-mr4IqMZc0FdnWw5-l-67" value="The path of the data file on the data hosting server" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;pointerEvents=1;align=center;" vertex="1" parent="4V-mr4IqMZc0FdnWw5-l-51">
           <mxGeometry x="472" width="118" height="75" as="geometry">
             <mxRectangle width="118" height="75" as="alternateBounds" />
           </mxGeometry>
