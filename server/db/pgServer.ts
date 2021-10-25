@@ -1,7 +1,12 @@
-import pg = require('pg');
-import {config} from '../config'
+import { Client, types } from 'pg'
+import { config } from '../config.js'
 
-const dbClient = new pg.Client(config.db);
+export const dbClient = new Client(config.db);
+
+//Disable the default parser
+types.setTypeParser(1114, value => value);  //TIMESTAMP
+types.setTypeParser(1184, value => value);  //TIMESTAMPTZ
+
 
 (async function () {
     await dbClient.connect();
@@ -10,4 +15,3 @@ const dbClient = new pg.Client(config.db);
     console.log("Database connection cannot be established:\n" + err);
 })
 
-export = dbClient;

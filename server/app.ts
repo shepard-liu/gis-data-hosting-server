@@ -1,9 +1,13 @@
 import * as createError from 'http-errors';
 import * as express from 'express';
 import * as path from 'path';
-import { usersRouter } from './routes/users';
+import * as passport from 'passport';
+import { usersRouter } from './routes/users.js';
 
 const app = express();
+
+// Use passport
+app.use(passport.initialize());
 
 // Setting up server
 app.set('port', 3000);
@@ -24,11 +28,11 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err: BaseError, req: express.Request, res: express.Response, next: express.NextFunction) {
+app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
- 
+  console.log(err);
   // render the error page
   res.status(err.status || 500);
   res.render('error');

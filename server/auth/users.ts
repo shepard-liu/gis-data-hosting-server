@@ -1,12 +1,11 @@
-import dbClient = require('../db/pgServer');
+import { dbClient } from '../db/pgServer.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 export type User = {
     username: string;
     password: string;
-    lastLogout?: number;
+    lastlogout?: number;
 };
-
 
 export enum UserActivity {
     Login = 'Login',
@@ -30,8 +29,19 @@ export class Users {
      * @return the user's username and password.
      */
     static async find(username: string): Promise<User> {
-        let result = await dbClient.query("SELECT * FROM users WHERE username = $1", [username]);
-        return result.rows.length ? result.rows[0] : null;
+        let result = await dbClient.query(`SELECT username, password, last_logout as lastlogout \
+        FROM users WHERE username = $1`, [username]);
+        if (result.rows.length) {
+            // Database table 'users' and 'user_activities' are using TIMESTAMPTZ(timestamp with time zone)
+            // as time datatype. when logging user's log-out time and activity happening time, 
+            // postgresql function 'now()' which returns current system time with time zone, is used.
+            // The node-postgres module's type parser for TIMESTAMPTZ has been overridden to parse string directly.
+            result.rows[0].lastlogout = new Date(result.rows[0].lastlogout).getTime();
+            return result.rows[0];
+        } else {
+            return null;
+        }
+        
     }
 
     /**
@@ -66,7 +76,8 @@ export class Users {
      */
     static async logUserActivity(username: string, activity: UserActivity, detail: string, ipAddress: string): Promise<void> {
         await dbClient.query(`INSERT INTO user_activities(timestamp, username, activity_type, activity_detail, ip_addr)
-         VALUES(current_timestamp, $1, $2, $3)`, [username, activity, detail, ipAddress]);
+         VALUES(current_timestamp, $1, $2, $3, $4)`,
+            [username, activity, detail, ipAddress]);
     }
 
     /**
@@ -74,7 +85,8 @@ export class Users {
      * @param username username
      */
     static async logUserLastLogout(username: string): Promise<void> {
-        await dbClient.query(`UPDATE users SET last_logout = current_timestamp WHERE username = $1`, [username]);
+        await dbClient.query(`UPDATE users SET last_logout = current_timestamp WHERE username = $1`,
+            [username]);
     }
 
 } 

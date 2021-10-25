@@ -1,6 +1,7 @@
 {
     "buildOptions": {"incremental": true},
     "compilerOptions": {
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "target": "ES5"
     }
 }

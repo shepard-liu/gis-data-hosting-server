@@ -1,8 +1,8 @@
-import passport = require('passport');
-import { Users, User } from './users';
+import * as passport from 'passport';
+import { Users, User } from './users.js';
 import { Strategy as jwtStrategy, ExtractJwt as jwtExtractor } from 'passport-jwt';
-import jwt = require('jsonwebtoken');
-import { config } from '../config';
+import * as jwt from 'jsonwebtoken';
+import { config } from '../config.js';
 
 type JwtPayload = {
     username: string,
@@ -17,7 +17,7 @@ passport.use(Users.authStrategy);
  * @param username the payload of jwt
  * @return signed jwt 
  */
-export function generateJsonWebToken(username: string): string {
+export function generateJwt(username: string): string {
     return jwt.sign({
         username,
         iat: Date.now()
@@ -34,7 +34,7 @@ passport.use(new jwtStrategy({
     let { username, iat } = payload as JwtPayload;
 
     Users.find(username).then((user) => {
-        if (user && (user.lastLogout || 0) < iat) done(null, user.username);
+        if (user && (user.lastlogout || 0) < iat) done(null, user.username);
         else done(null, false);
     }).catch((err) => {
         done(err, false);
@@ -47,3 +47,8 @@ passport.use(new jwtStrategy({
  * user database to verify the user
  */
 export const authenticateWithJwt = passport.authenticate('jwt', { session: false });
+
+/**
+ * Handles user authentication with passport local strategy
+ */
+export const authenticateWithLocal = passport.authenticate('local', { session: false });

@@ -3,19 +3,19 @@
 /**
  * Module dependencies.
  */
-exports.__esModule = true;
-var app_1 = require("../app");
-var debug_1 = require("debug");
+Object.defineProperty(exports, "__esModule", { value: true });
+var app_js_1 = require("../app.js");
+var debug = require("debug");
 var http = require("http");
 /**
  * Get port from environment and store in Express.
  */
 var port = normalizePort(process.env.PORT || '3000');
-app_1.app.set('port', port);
+app_js_1.app.set('port', port);
 /**
  * Create HTTP server.
  */
-var server = http.createServer(app_1.app);
+var server = http.createServer(app_js_1.app);
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -73,5 +73,5 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    (0, debug_1.debug)('data-server:server')('Listening on ' + bind);
+    debug('data-server:server')('Listening on ' + bind);
 }
