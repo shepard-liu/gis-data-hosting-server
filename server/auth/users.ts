@@ -4,17 +4,19 @@ import { Strategy as LocalStrategy } from 'passport-local';
 export type User = {
     username: string;
     password: string;
+    lastLogout?: number;
 };
 
+
 export enum UserActivity {
-    Login       = 'Login',
-    Logout      = 'logout',
-    Register    = 'register',
-    Query       = 'query',    // User queries GIS data availability
-    Download    = 'download',
-    Upload      = 'upload',
-    Delete      = 'delete',
-    Modify      = 'modify'    // Admin user replaces data
+    Login = 'Login',
+    Logout = 'Logout',
+    Register = 'Register',
+    Query = 'Query',    // User queries GIS data availability
+    Download = 'Download',
+    Upload = 'Upload',
+    Delete = 'Delete',
+    Modify = 'Modify'    // Admin user replaces data
 }
 
 /**
@@ -62,9 +64,17 @@ export class Users {
      * @param activity the user's activity type(enum)
      * @param detail detailed description of the activity
      */
-    static async logUserActivity(username: string, activity: UserActivity, detail: string): Promise<void> {
-        await dbClient.query(`INSERT INTO user_activities(timestamp, username, activity_type, activity_detail)
-         VALUES(current_timestamp, $1, $2, $3)`, [username, activity, detail]);
+    static async logUserActivity(username: string, activity: UserActivity, detail: string, ipAddress: string): Promise<void> {
+        await dbClient.query(`INSERT INTO user_activities(timestamp, username, activity_type, activity_detail, ip_addr)
+         VALUES(current_timestamp, $1, $2, $3)`, [username, activity, detail, ipAddress]);
+    }
+
+    /**
+     * update db table 'users'. update user's last log out timestamp
+     * @param username username
+     */
+    static async logUserLastLogout(username: string): Promise<void> {
+        await dbClient.query(`UPDATE users SET last_logout = current_timestamp WHERE username = $1`, [username]);
     }
 
 } 

@@ -41,9 +41,6 @@ build/Release
 node_modules/
 jspm_packages/
 
-# TypeScript v1 declaration files
-typings/
-
 # TypeScript cache
 *.tsbuildinfo
 
@@ -61,6 +58,8 @@ typings/
 
 # Optional REPL history
 .node_repl_history
+#hello eye
+
 
 # Output of 'npm pack'
 *.tgz

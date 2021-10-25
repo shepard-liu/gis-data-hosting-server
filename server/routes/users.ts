@@ -1,12 +1,12 @@
 import * as express from 'express';
-import { verifyUser, generateJsonWebToken } from '../auth/authenticate';
+import { authenticateWithJwt, generateJsonWebToken } from '../auth/authenticate';
 import { Users, User, UserActivity } from '../auth/users';
 import passport = require('passport');
 
 const router = express.Router();
 
 /**
- * Dealing with login request
+ * Dealing with log in request
  * 
  * Request format:
  * The username and password are beared as the request body
@@ -24,8 +24,8 @@ const router = express.Router();
  */
 router.route('/login').post(passport.authenticate('local'), (request, response, next) => {
 	// Record the log-in activity in the database
-	Users.logUserActivity(request.user as string, UserActivity.Login, 'success');
-	
+	Users.logUserActivity(request.user as string, UserActivity.Login, 'Successful', request.ip);
+
 	// Configuring response
 	response.statusCode = 200;
 	response.setHeader('Content-Type', 'application/json');
@@ -37,7 +37,7 @@ router.route('/login').post(passport.authenticate('local'), (request, response, 
 });
 
 /**
- * Dealing with signup request
+ * Dealing with sign up request
  * 
  * Request format:
  * The username and password are beared as the request body
@@ -50,7 +50,7 @@ router.route('/login').post(passport.authenticate('local'), (request, response, 
  * {
  * 		success: boolean,
  * 		token: string,	//JsonWebToken
- * 		message: string	//A greeting message
+ * 		message: string
  * }
  */
 router.route('/signup').post((request, response, next) => {
@@ -65,9 +65,12 @@ router.route('/signup').post((request, response, next) => {
 		Contact the website administrator for a available account.
 		`
 	});
-	
+
 	// Try to register the user
 	Users.register(request.body as User).then((user) => {
+		// Record the registration activity to the database
+		Users.logUserActivity((<User>request.body).username, UserActivity.Register, 'Successful', request.ip);
+
 		response.statusCode = 200;
 		response.setHeader('Content-Type', 'application/json');
 		response.json({
@@ -75,10 +78,12 @@ router.route('/signup').post((request, response, next) => {
 			token: generateJsonWebToken((<User>request.body).username),
 			status: "Registration Successful!"
 		});
+
+
 	}).catch((err) => {
 		// The validation of constraint for password and username should be done on the front-end
 		// This error happens only when the username has already been used.
-		// However, if users send a request directly. The front-end validation could be bypassed.
+		// However, if users send a request directly, the front-end validation could be bypassed.
 		// In the database table the validation will be performed again.
 		response.statusCode = 400;
 		response.setHeader('Content-Type', 'application/json');
@@ -88,7 +93,28 @@ router.route('/signup').post((request, response, next) => {
 			status: "Registration Failed. The username has already been used."
 		});
 	})
-	
-})
+});
+
+/**
+ * Dealing with log out request
+ * 
+ * Request format:
+ * {
+ * }
+ * 
+ * Response format:
+ * {
+ * 		success: boolean,
+ * 		message: string
+ * }
+ */
+router.route('/logout').post(authenticateWithJwt, (request, response, next) => {
+	// Record the log-out activity in the database
+	Users.logUserActivity(request.user as string, UserActivity.Logout, 'Successful', request.ip);
+
+	// Record the last log-out time of the user in the database
+	Users.logUserLastLogout(request.user as string);
+
+});
 
 export { router as usersRouter };
