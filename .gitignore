@@ -105,3 +105,6 @@ dist
 
 # Node Modules
 node_modules
+
+# ArcGIS JS API Offline Package
+arcgis_js_api_4.21
