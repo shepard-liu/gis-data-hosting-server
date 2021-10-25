@@ -34,7 +34,7 @@ passport.use(new jwtStrategy({
     let { username, iat } = payload as JwtPayload;
 
     Users.find(username).then((user) => {
-        if (user && user.lastLogout < iat) done(null, user.username);
+        if (user && (user.lastLogout || 0) < iat) done(null, user.username);
         else done(null, false);
     }).catch((err) => {
         done(err, false);
