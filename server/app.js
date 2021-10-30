@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var passport = require("passport");
-var usersRouter_1 = require("./routes/usersRouter");
-var dataRouter_1 = require("./routes/dataRouter");
-var staticRouter_1 = require("./routes/staticRouter");
-var app = express();
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const passport = require("passport");
+const usersRouter_1 = require("./routes/usersRouter");
+const dataRouter_1 = require("./routes/dataRouter");
+const staticRouter_1 = require("./routes/staticRouter");
+const app = express();
 exports.app = app;
 // // Configuring Webpack development server
 // import webpackConfig from './webpack.config';

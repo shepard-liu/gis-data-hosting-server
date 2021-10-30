@@ -1,6 +1,6 @@
 import * as createError from 'http-errors';
 import * as express from 'express';
-import * as webpack from 'webpack';
+import webpack from 'webpack';
 import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import * as path from 'path';
 import * as passport from 'passport';

@@ -5,13 +5,18 @@
     },
     "compilerOptions": {
         "lib": [
-            "ES2019","DOM"
+            "ES2019",
+            "DOM"
         ],
         "noImplicitAny": true,
-        "target": "ES5",
+        "target": "ES6",
+        "module": "commonjs",
         "experimentalDecorators": true,
         "jsx": "react",
-        "jsxFactory": "jsx"
+        "jsxFactory": "jsx",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node"
+
     },
     "include": [
         "./node_modules/@arcgis/core/interfaces.d.ts",

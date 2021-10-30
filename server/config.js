@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var config = {
+const config = {
     hostname: 'localhost',
     port: 3000,
     secretKey: "iusng8983hyhg29faxj28gr",

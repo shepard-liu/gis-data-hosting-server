@@ -4,9 +4,9 @@
  * Module dependencies.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var app_js_1 = require("../app.js");
-var debug = require("debug");
-var http = require("http");
+const app_js_1 = require("../app.js");
+const debug = require("debug");
+const http = require("http");
 // Setting currect working directory
 /**
  * Get port from environment and store in Express.
@@ -22,8 +22,8 @@ var server = http.createServer(app_js_1.app);
  */
 // TODO: enable https
 var hostname = 'localhost';
-server.listen(port, 'localhost', function () {
-    console.log("Server listening on " + hostname + ":" + port);
+server.listen(port, 'localhost', () => {
+    console.log(`Server listening on ${hostname}:${port}`);
 });
 server.on('error', onError);
 server.on('listening', onListening);

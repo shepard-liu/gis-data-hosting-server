@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticateWithAdmin = exports.authenticateWithLocal = exports.authenticateWithJwt = exports.generateJwt = void 0;
-var passport = require("passport");
-var users_js_1 = require("../util/users.js");
-var passport_jwt_1 = require("passport-jwt");
-var jwt = require("jsonwebtoken");
-var config_js_1 = require("../config.js");
+const passport = require("passport");
+const users_js_1 = require("../util/users.js");
+const passport_jwt_1 = require("passport-jwt");
+const jwt = require("jsonwebtoken");
+const config_js_1 = require("../config.js");
 // use local authentication strategy
 passport.use(users_js_1.Users.authStrategy);
 /**
@@ -15,7 +15,7 @@ passport.use(users_js_1.Users.authStrategy);
  */
 function generateJwt(username) {
     return jwt.sign({
-        username: username,
+        username,
         iat: Date.now()
     }, config_js_1.default.secretKey, {
         expiresIn: config_js_1.default.jwtExpirationTime
@@ -27,14 +27,14 @@ exports.generateJwt = generateJwt;
 passport.use(new passport_jwt_1.Strategy({
     secretOrKey: config_js_1.default.secretKey,
     jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()
-}, function (payload, done) {
-    var _a = payload, username = _a.username, iat = _a.iat;
-    users_js_1.Users.find(username).then(function (user) {
+}, (payload, done) => {
+    let { username, iat } = payload;
+    users_js_1.Users.find(username).then((user) => {
         if (user && (user.last_logout || 0) < iat)
             done(null, user);
         else
             done(null, false);
-    }).catch(function (err) {
+    }).catch((err) => {
         done(err, false);
     });
 }));
@@ -50,7 +50,7 @@ exports.authenticateWithLocal = passport.authenticate('local', { session: false 
 /**
  * Verify if the user is an administrator
  */
-var authenticateWithAdmin = function (request, response, next) {
+const authenticateWithAdmin = (request, response, next) => {
     if (request.user.admin)
         next();
     else

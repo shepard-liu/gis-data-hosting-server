@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,20 +7,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HelloWorld = void 0;
-var Widget_1 = require("@arcgis/core/widgets/Widget");
-var decorators_1 = require("@arcgis/core/core/accessorSupport/decorators");
-var Widget_2 = require("@arcgis/core/widgets/support/Widget");
-var HelloWorld = /** @class */ (function (_super) {
-    __extends(HelloWorld, _super);
-    function HelloWorld(params) {
-        return _super.call(this, params) || this;
+const Widget_1 = require("@arcgis/core/widgets/Widget");
+const decorators_1 = require("@arcgis/core/core/accessorSupport/decorators");
+const Widget_2 = require("@arcgis/core/widgets/support/Widget");
+let HelloWorld = class HelloWorld extends Widget_1.default {
+    constructor(params) {
+        super(params);
     }
-    HelloWorld.prototype.render = function () {
+    render() {
         return ((0, Widget_2.tsx)("div", null, "HelloWorld!!!"));
-    };
-    HelloWorld = __decorate([
-        (0, decorators_1.subclass)('esri.widgets.HelloWorld')
-    ], HelloWorld);
-    return HelloWorld;
-}((0, decorators_1.declared)(Widget_1.default)));
+    }
+};
+HelloWorld = __decorate([
+    (0, decorators_1.subclass)('esri.widgets.HelloWorld')
+], HelloWorld);
 exports.HelloWorld = HelloWorld;

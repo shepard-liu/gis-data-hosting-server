@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express");
-var authenticate_1 = require("../auth/authenticate");
-var users_1 = require("../util/users");
-var router = express.Router();
+const express = require("express");
+const authenticate_1 = require("../auth/authenticate");
+const users_1 = require("../util/users");
+const router = express.Router();
 /**
  * Dealing with log in request
  *
@@ -21,7 +21,7 @@ var router = express.Router();
  * 		message: string	//A greeting message
  * }
  */
-router.route('/login').post(authenticate_1.authenticateWithLocal, function (request, response, next) {
+router.route('/login').post(authenticate_1.authenticateWithLocal, (request, response, next) => {
     // Record the log-in activity in the database
     users_1.Users.logUserActivity(request.user.username, users_1.UserActivity.Login, 'Successful', request.ip)
         .catch(console.log);
@@ -51,18 +51,19 @@ router.route('/login').post(authenticate_1.authenticateWithLocal, function (requ
  * 		message: string
  * }
  */
-router.route('/signup').post(function (request, response, next) {
+router.route('/signup').post((request, response, next) => {
     // The register is not open now.
     response.statusCode = 405;
     response.setHeader('Content-Type', 'application/json');
     response.json({
         success: false,
         token: null,
-        status: "The registration procedure is currently not available.\nContact the website administrator for a available account."
+        status: `The registration procedure is currently not available.
+Contact the website administrator for a available account.`
     });
     return;
     // Try to register the user
-    users_1.Users.register(request.body).then(function (user) {
+    users_1.Users.register(request.body).then((user) => {
         // Record the registration activity to the database
         users_1.Users.logUserActivity(request.body.username, users_1.UserActivity.Register, 'Successful', request.ip)
             .catch(console.log);
@@ -73,7 +74,7 @@ router.route('/signup').post(function (request, response, next) {
             token: (0, authenticate_1.generateJwt)(request.body.username),
             status: "Registration Successful!"
         });
-    }).catch(function (err) {
+    }).catch((err) => {
         // The validation of constraint for password and username should be done on the front-end
         // This error happens only when the username has already been used.
         // However, if users send a request directly, the front-end validation could be bypassed.
@@ -100,7 +101,7 @@ router.route('/signup').post(function (request, response, next) {
  * 		message: string
  * }
  */
-router.route('/logout').post(authenticate_1.authenticateWithJwt, function (request, response, next) {
+router.route('/logout').post(authenticate_1.authenticateWithJwt, (request, response, next) => {
     // Record the log-out activity in the database
     users_1.Users.logUserActivity(request.user.username, users_1.UserActivity.Logout, 'Successful', request.ip)
         .catch(console.log);
