@@ -1,10 +1,22 @@
 import * as createError from 'http-errors';
 import * as express from 'express';
+import * as webpack from 'webpack';
+import * as webpackDevMiddleware from 'webpack-dev-middleware';
 import * as path from 'path';
 import * as passport from 'passport';
-import { usersRouter } from './routes/users.js';
+import usersRouter  from './routes/usersRouter';
+import dataRouter from './routes/dataRouter';
+import staticRouter from './routes/staticRouter'
 
 const app = express();
+
+// // Configuring Webpack development server
+// import webpackConfig from './webpack.config';
+// const webpackCompiler = webpack(webpackConfig as webpack.Configuration);
+
+// app.use(webpackDevMiddleware(webpackCompiler, {
+//   publicPath: webpackConfig.output.publicPath,
+// }));
 
 // Use passport
 app.use(passport.initialize());
@@ -18,9 +30,11 @@ app.set('view engine', 'pug');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
 
+// initialize routers
 app.use('/users', usersRouter);
+app.use('/api/data', dataRouter);
+app.use('/', staticRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,8 +1,9 @@
 import * as passport from 'passport';
-import { Users, User } from './users.js';
+import { Users, User } from '../util/users.js';
 import { Strategy as jwtStrategy, ExtractJwt as jwtExtractor } from 'passport-jwt';
 import * as jwt from 'jsonwebtoken';
-import { config } from '../config.js';
+import config from '../config.js';
+import * as express from 'express';
 
 type JwtPayload = {
     username: string,
@@ -34,7 +35,7 @@ passport.use(new jwtStrategy({
     let { username, iat } = payload as JwtPayload;
 
     Users.find(username).then((user) => {
-        if (user && (user.lastlogout || 0) < iat) done(null, user.username);
+        if (user && (user.last_logout || 0) < iat) done(null, user);
         else done(null, false);
     }).catch((err) => {
         done(err, false);
@@ -52,3 +53,13 @@ export const authenticateWithJwt = passport.authenticate('jwt', { session: false
  * Handles user authentication with passport local strategy
  */
 export const authenticateWithLocal = passport.authenticate('local', { session: false });
+
+/**
+ * Verify if the user is an administrator
+ */
+export const authenticateWithAdmin: express.RequestHandler = (request, response, next) => {
+    if ((<User>request.user).admin)
+        next();
+    else
+        next(new Error('Permission denied.'));
+};

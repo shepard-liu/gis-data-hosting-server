@@ -4,7 +4,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 export type User = {
     username: string;
     password: string;
-    lastlogout?: number;
+    admin: boolean;
+    last_logout?: number;
 };
 
 export enum UserActivity {
@@ -29,15 +30,20 @@ export class Users {
      * @return the user's username and password.
      */
     static async find(username: string): Promise<User> {
-        let result = await dbClient.query(`SELECT username, password, last_logout as lastlogout \
+        let result = await dbClient.query(`SELECT username, password, last_logout \
         FROM users WHERE username = $1`, [username]);
         if (result.rows.length) {
+            let user = result.rows[0] as User;
             // Database table 'users' and 'user_activities' are using TIMESTAMPTZ(timestamp with time zone)
             // as time datatype. when logging user's log-out time and activity happening time, 
             // postgresql function 'now()' which returns current system time with time zone, is used.
             // The node-postgres module's type parser for TIMESTAMPTZ has been overridden to parse string directly.
-            result.rows[0].lastlogout = new Date(result.rows[0].lastlogout).getTime();
-            return result.rows[0];
+            user.last_logout = new Date(user.last_logout).getTime();
+
+            // Determine permission
+            user.admin = await Users.isAdministrator(user.username);
+
+            return user;
         } else {
             return null;
         }
@@ -60,7 +66,7 @@ export class Users {
         this.find(username).then(user => {
             if (user.password === password)
                 //This will set req.user as the authenticated user's username
-                done(null, user.username);
+                done(null, user);
             else
                 done(null, false, { message: "Incorrect password" });
         }).catch(err => {
@@ -87,6 +93,10 @@ export class Users {
     static async logUserLastLogout(username: string): Promise<void> {
         await dbClient.query(`UPDATE users SET last_logout = current_timestamp WHERE username = $1`,
             [username]);
+    }
+
+    static async isAdministrator(username: string): Promise<boolean> {
+        return username === 'administrator';
     }
 
 } 

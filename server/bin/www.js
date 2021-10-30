@@ -7,6 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var app_js_1 = require("../app.js");
 var debug = require("debug");
 var http = require("http");
+// Setting currect working directory
 /**
  * Get port from environment and store in Express.
  */

@@ -5,9 +5,17 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var passport = require("passport");
-var users_js_1 = require("./routes/users.js");
+var usersRouter_1 = require("./routes/usersRouter");
+var dataRouter_1 = require("./routes/dataRouter");
+var staticRouter_1 = require("./routes/staticRouter");
 var app = express();
 exports.app = app;
+// // Configuring Webpack development server
+// import webpackConfig from './webpack.config';
+// const webpackCompiler = webpack(webpackConfig as webpack.Configuration);
+// app.use(webpackDevMiddleware(webpackCompiler, {
+//   publicPath: webpackConfig.output.publicPath,
+// }));
 // Use passport
 app.use(passport.initialize());
 // Setting up server
@@ -17,8 +25,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/users', users_js_1.usersRouter);
+// initialize routers
+app.use('/users', usersRouter_1.default);
+app.use('/api/data', dataRouter_1.default);
+app.use('/', staticRouter_1.default);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));

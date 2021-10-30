@@ -8,6 +8,9 @@ import { app } from '../app.js';
 import * as debug from 'debug';
 import * as http from 'http';
 
+// Setting currect working directory
+
+
 /**
  * Get port from environment and store in Express.
  */

@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.dbClient = void 0;
 var pg_1 = require("pg");
 var config_js_1 = require("../config.js");
-exports.dbClient = new pg_1.Client(config_js_1.config.db);
+exports.dbClient = new pg_1.Client(config_js_1.default.db);
 //Disable the default parser
 pg_1.types.setTypeParser(1114, function (value) { return value; }); //TIMESTAMP
 pg_1.types.setTypeParser(1184, function (value) { return value; }); //TIMESTAMPTZ

@@ -1,5 +1,5 @@
 import { Client, types } from 'pg'
-import { config } from '../config.js'
+import config from '../config.js'
 
 export const dbClient = new Client(config.db);
 

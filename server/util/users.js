@@ -64,24 +64,27 @@ var Users = /** @class */ (function () {
      */
     Users.find = function (username) {
         return __awaiter(this, void 0, void 0, function () {
-            var result;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4 /*yield*/, pgServer_js_1.dbClient.query("SELECT username, password, last_logout as lastlogout         FROM users WHERE username = $1", [username])];
+            var result, user, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: return [4 /*yield*/, pgServer_js_1.dbClient.query("SELECT username, password, last_logout         FROM users WHERE username = $1", [username])];
                     case 1:
-                        result = _b.sent();
-                        if (result.rows.length) {
-                            // Database table 'users' and 'user_activities' are using TIMESTAMPTZ(timestamp with time zone)
-                            // as time datatype. when logging user's log-out time and activity happening time, 
-                            // postgresql function 'now()' which returns current system time with time zone, is used.
-                            // The node-postgres module's type parser for TIMESTAMPTZ has been overridden to parse string directly.
-                            result.rows[0].lastlogout = new Date(result.rows[0].lastlogout).getTime();
-                            return [2 /*return*/, result.rows[0]];
-                        }
-                        else {
-                            return [2 /*return*/, null];
-                        }
-                        return [2 /*return*/];
+                        result = _c.sent();
+                        if (!result.rows.length) return [3 /*break*/, 3];
+                        user = result.rows[0];
+                        // Database table 'users' and 'user_activities' are using TIMESTAMPTZ(timestamp with time zone)
+                        // as time datatype. when logging user's log-out time and activity happening time, 
+                        // postgresql function 'now()' which returns current system time with time zone, is used.
+                        // The node-postgres module's type parser for TIMESTAMPTZ has been overridden to parse string directly.
+                        user.last_logout = new Date(user.last_logout).getTime();
+                        // Determine permission
+                        _b = user;
+                        return [4 /*yield*/, Users.isAdministrator(user.username)];
+                    case 2:
+                        // Determine permission
+                        _b.admin = _c.sent();
+                        return [2 /*return*/, user];
+                    case 3: return [2 /*return*/, null];
                 }
             });
         });
@@ -137,6 +140,13 @@ var Users = /** @class */ (function () {
             });
         });
     };
+    Users.isAdministrator = function (username) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                return [2 /*return*/, username === 'administrator'];
+            });
+        });
+    };
     var _a;
     _a = Users;
     /**
@@ -146,7 +156,7 @@ var Users = /** @class */ (function () {
         _a.find(username).then(function (user) {
             if (user.password === password)
                 //This will set req.user as the authenticated user's username
-                done(null, user.username);
+                done(null, user);
             else
                 done(null, false, { message: "Incorrect password" });
         }).catch(function (err) {

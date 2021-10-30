@@ -1,11 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersRouter = void 0;
 var express = require("express");
-var authenticate_js_1 = require("../auth/authenticate.js");
-var users_js_1 = require("../auth/users.js");
+var authenticate_1 = require("../auth/authenticate");
+var users_1 = require("../util/users");
 var router = express.Router();
-exports.usersRouter = router;
 /**
  * Dealing with log in request
  *
@@ -23,16 +21,16 @@ exports.usersRouter = router;
  * 		message: string	//A greeting message
  * }
  */
-router.route('/login').post(authenticate_js_1.authenticateWithLocal, function (request, response, next) {
+router.route('/login').post(authenticate_1.authenticateWithLocal, function (request, response, next) {
     // Record the log-in activity in the database
-    users_js_1.Users.logUserActivity(request.user, users_js_1.UserActivity.Login, 'Successful', request.ip)
+    users_1.Users.logUserActivity(request.user.username, users_1.UserActivity.Login, 'Successful', request.ip)
         .catch(console.log);
     // Configuring response
     response.statusCode = 200;
     response.setHeader('Content-Type', 'application/json');
     response.json({
         success: true,
-        token: (0, authenticate_js_1.generateJwt)(request.user),
+        token: (0, authenticate_1.generateJwt)(request.user.username),
         message: "You've been logged in.",
     });
 });
@@ -64,15 +62,15 @@ router.route('/signup').post(function (request, response, next) {
     });
     return;
     // Try to register the user
-    users_js_1.Users.register(request.body).then(function (user) {
+    users_1.Users.register(request.body).then(function (user) {
         // Record the registration activity to the database
-        users_js_1.Users.logUserActivity(request.body.username, users_js_1.UserActivity.Register, 'Successful', request.ip)
+        users_1.Users.logUserActivity(request.body.username, users_1.UserActivity.Register, 'Successful', request.ip)
             .catch(console.log);
         response.statusCode = 200;
         response.setHeader('Content-Type', 'application/json');
         response.json({
             success: true,
-            token: (0, authenticate_js_1.generateJwt)(request.body.username),
+            token: (0, authenticate_1.generateJwt)(request.body.username),
             status: "Registration Successful!"
         });
     }).catch(function (err) {
@@ -102,15 +100,15 @@ router.route('/signup').post(function (request, response, next) {
  * 		message: string
  * }
  */
-router.route('/logout').post(authenticate_js_1.authenticateWithJwt, function (request, response, next) {
+router.route('/logout').post(authenticate_1.authenticateWithJwt, function (request, response, next) {
     // Record the log-out activity in the database
-    users_js_1.Users.logUserActivity(request.user, users_js_1.UserActivity.Logout, 'Successful', request.ip)
+    users_1.Users.logUserActivity(request.user.username, users_1.UserActivity.Logout, 'Successful', request.ip)
         .catch(console.log);
     // Record the last log-out time of the user in the database
     // JWT is stateless. So I have to record the last log out time in the database
     // The Jwt payload has a 'issued at' timestamp. if the last log out timestamp > iat,
-    // the authentication process will be blocked.
-    users_js_1.Users.logUserLastLogout(request.user)
+    // the authentication process will be terminated.
+    users_1.Users.logUserLastLogout(request.user.username)
         .catch(console.log);
     response.statusCode = 200;
     response.setHeader('Content-Type', 'application/json');
@@ -119,3 +117,4 @@ router.route('/logout').post(authenticate_js_1.authenticateWithJwt, function (re
         message: "You've been successfully logged out"
     });
 });
+exports.default = router;

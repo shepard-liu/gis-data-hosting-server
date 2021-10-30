@@ -1,7 +1,22 @@
 {
-    "buildOptions": {"incremental": true},
+    
+    "buildOptions": {
+        "incremental": true
+    },
     "compilerOptions": {
+        "lib": [
+            "ES2019","DOM"
+        ],
         "noImplicitAny": true,
-        "target": "ES5"
-    }
+        "target": "ES5",
+        "experimentalDecorators": true,
+        "jsx": "react",
+        "jsxFactory": "jsx"
+    },
+    "include": [
+        "./node_modules/@arcgis/core/interfaces.d.ts",
+        "**/*.ts",
+        "**/*.tsx"
+    ]
+    
 }

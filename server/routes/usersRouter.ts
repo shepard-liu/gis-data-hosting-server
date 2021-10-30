@@ -1,7 +1,6 @@
 import * as express from 'express';
-import { authenticateWithJwt, authenticateWithLocal, generateJwt } from '../auth/authenticate.js';
-import { Users, User, UserActivity } from '../auth/users.js';
-import * as passport from 'passport';
+import { authenticateWithJwt, authenticateWithLocal, generateJwt } from '../auth/authenticate';
+import { Users, User, UserActivity } from '../util/users';
 
 const router = express.Router();
 
@@ -24,7 +23,7 @@ const router = express.Router();
  */
 router.route('/login').post(authenticateWithLocal, (request, response, next) => {
 	// Record the log-in activity in the database
-	Users.logUserActivity(request.user as string, UserActivity.Login, 'Successful', request.ip)
+	Users.logUserActivity((<User>request.user).username, UserActivity.Login, 'Successful', request.ip)
 		.catch(console.log);
 
 	// Configuring response
@@ -32,7 +31,7 @@ router.route('/login').post(authenticateWithLocal, (request, response, next) => 
 	response.setHeader('Content-Type', 'application/json');
 	response.json({
 		success: true,
-		token: generateJwt(request.user as string),
+		token: generateJwt((<User>request.user).username),
 		message: "You've been logged in.",
 	});
 });
@@ -110,14 +109,14 @@ Contact the website administrator for a available account.`
  */
 router.route('/logout').post(authenticateWithJwt, (request, response, next) => {
 	// Record the log-out activity in the database
-	Users.logUserActivity(request.user as string, UserActivity.Logout, 'Successful', request.ip)
+	Users.logUserActivity((<User>request.user).username, UserActivity.Logout, 'Successful', request.ip)
 		.catch(console.log);
 
 	// Record the last log-out time of the user in the database
 	// JWT is stateless. So I have to record the last log out time in the database
 	// The Jwt payload has a 'issued at' timestamp. if the last log out timestamp > iat,
-	// the authentication process will be blocked.
-	Users.logUserLastLogout(request.user as string)
+	// the authentication process will be terminated.
+	Users.logUserLastLogout((<User>request.user).username)
 		.catch(console.log);
 
 
@@ -129,4 +128,4 @@ router.route('/logout').post(authenticateWithJwt, (request, response, next) => {
 	});
 });
 
-export { router as usersRouter };
+export default router;
