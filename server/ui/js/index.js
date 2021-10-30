@@ -21,5 +21,3 @@ const view = new SceneView_1.default({
     center: [110, 30],
     zoom: 6
 });
-const HelloWorld_1 = require("./widgets/HelloWorld");
-view.ui.add(new HelloWorld_1.HelloWorld(), 'bottom-left');

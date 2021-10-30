@@ -25,6 +25,3 @@ const view = new SceneView({
     center: [110, 30],
     zoom: 6
 });
-
-import { HelloWorld } from './widgets/HelloWorld';
-view.ui.add(new HelloWorld(), 'bottom-left');
