@@ -9,5 +9,6 @@
         "**/*.js.map": true,
         //"**/*.js":true,
         //"**/node_modules":true
-    }
+    },
+    "editor.fontSize": 14
 }

@@ -15,10 +15,16 @@ const router = express.Router();
  * }
  *
  * Response format:
+ * (when successful)
  * {
  * 		success: boolean,
  * 		token: string,	//JsonWebToken
  * 		message: string	//A greeting message
+ * }
+ * (when failed)
+ * {
+ * 		success: boolean,
+ * 		message: string
  * }
  */
 router.route('/login').post(authenticate_1.authenticateWithLocal, (request, response, next) => {
@@ -33,6 +39,19 @@ router.route('/login').post(authenticate_1.authenticateWithLocal, (request, resp
         token: (0, authenticate_1.generateJwt)(request.user.username),
         message: "You've been logged in.",
     });
+}, (error, request, response, next) => {
+    // Record the log-in activity in the database
+    users_1.Users.logUserActivity(null, users_1.UserActivity.Login, 'Failed', request.ip)
+        .catch(console.log);
+    // delay the response
+    setTimeout(() => {
+        response.statusCode = 401;
+        response.setHeader('Content-Type', 'application/json');
+        response.json({
+            success: false,
+            message: "Incorrect username or password"
+        });
+    }, 1000);
 });
 /**
  * Dealing with sign up request

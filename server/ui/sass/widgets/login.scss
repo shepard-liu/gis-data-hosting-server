@@ -1,0 +1,125 @@
+@import "./base.scss";
+
+$fontSizeBase: 16px;
+$inputBoxHeight: 30px;
+
+* {
+    box-sizing: border-box;
+}
+
+.login {
+    font-family: "Avenir Next"; // Provided by Esri
+    font-size: $fontSizeBase; //Basical font size
+    box-sizing: border-box;
+
+    box-shadow: 3px 3px 6px #888888 ;
+
+    // Center this element
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 20px;
+
+    @media (min-width: 0) and (max-width: $sm) {
+        width: 80%;
+    }
+    @media (min-width: $sm) and (max-width: $md) {
+        width: 50%;
+    }
+    @media (min-width: $md) and (max-width: $lg) {
+        width: 40%;
+    }
+    @media (min-width: $lg) and (max-width: $xl) {
+        width: 30%;
+    }
+    @media (min-width: $xl) and (max-width: $xxl) {
+        width: 30%;
+    }
+    @media (min-width: $xxl) {
+        width: 30%;
+    }
+}
+
+.login__container {
+}
+
+.login__header {
+    font-size: $fontSizeBase * 2;
+    margin: 30px 0 30px 0;
+}
+
+%login__button-wrapper {
+    padding: 10px;
+}
+
+.login__login-button-wrapper {
+    @extend %login__button-wrapper;
+}
+
+.login__register-button-wrapper {
+    @extend %login__button-wrapper;
+}
+
+%login__button {
+    height: 30px;
+}
+
+.login__login-button {
+    @extend %login__button;
+}
+
+%login__login-button-icon {
+    height: 100%;
+    width: auto;
+}
+
+.login__login-button-icon-loading {
+    @extend %login__login-button-icon;
+}
+
+.login__login-button-icon-success {
+    @extend %login__login-button-icon;
+}
+
+.login__register-button {
+    @extend %login__button;
+    width: 100%;
+    height: 100%;
+}
+
+.login__input-box {
+    margin: 15px 0 20px 0;
+    width: 100%;
+}
+
+.login__input-box-label {
+    font-size: $fontSizeBase;
+    font-weight: 400;
+}
+
+.login__input-box-input {
+    height: $inputBoxHeight;
+    width: 100%;
+}
+
+%login__message-label {
+    font-size: $fontSizeBase * 0.8;
+    text-align: justify;
+}
+
+.login__message-label--warning {
+    @extend %login__message-label;
+    color: orange;
+}
+
+.login__message-label--success {
+    @extend %login__message-label;
+    color: lightgreen;
+}
+
+.login__message-label--error {
+    @extend %login__message-label;
+    color: red;
+}

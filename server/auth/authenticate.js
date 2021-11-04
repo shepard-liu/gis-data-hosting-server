@@ -46,7 +46,10 @@ exports.authenticateWithJwt = passport.authenticate('jwt', { session: false });
 /**
  * Handles user authentication with passport local strategy
  */
-exports.authenticateWithLocal = passport.authenticate('local', { session: false });
+exports.authenticateWithLocal = passport.authenticate('local', {
+    session: false,
+    failWithError: true, // The error set by passport will be handled
+});
 /**
  * Verify if the user is an administrator
  */

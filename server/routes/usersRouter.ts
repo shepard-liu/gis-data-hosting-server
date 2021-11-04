@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { response } from 'express';
 import { authenticateWithJwt, authenticateWithLocal, generateJwt } from '../auth/authenticate';
 import { Users, User, UserActivity } from '../util/users';
 
@@ -15,26 +16,48 @@ const router = express.Router();
  * }
  * 
  * Response format:
+ * (when successful)
  * {
  * 		success: boolean,
  * 		token: string,	//JsonWebToken
  * 		message: string	//A greeting message
  * }
+ * (when failed)
+ * {
+ * 		success: boolean,
+ * 		message: string
+ * }
  */
-router.route('/login').post(authenticateWithLocal, (request, response, next) => {
-	// Record the log-in activity in the database
-	Users.logUserActivity((<User>request.user).username, UserActivity.Login, 'Successful', request.ip)
-		.catch(console.log);
+router.route('/login').post(
+	authenticateWithLocal,
+	(request: express.Request, response: express.Response, next: express.NextFunction) => {
+		// Record the log-in activity in the database
+		Users.logUserActivity((<User>request.user).username, UserActivity.Login, 'Successful', request.ip)
+			.catch(console.log);
 
-	// Configuring response
-	response.statusCode = 200;
-	response.setHeader('Content-Type', 'application/json');
-	response.json({
-		success: true,
-		token: generateJwt((<User>request.user).username),
-		message: "You've been logged in.",
+		// Configuring response
+		response.statusCode = 200;
+		response.setHeader('Content-Type', 'application/json');
+		response.json({
+			success: true,
+			token: generateJwt((<User>request.user).username),
+			message: "You've been logged in.",
+		});
+	}, (error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
+		// Record the log-in activity in the database
+		Users.logUserActivity(null, UserActivity.Login, 'Failed', request.ip)
+			.catch(console.log);
+		
+		// delay the response
+		setTimeout(() => {
+			response.statusCode = 401;
+			response.setHeader('Content-Type', 'application/json');
+			response.json({
+				success: false,
+				message: "Incorrect username or password"
+			});
+		}, 1000);
 	});
-});
 
 /**
  * Dealing with sign up request

@@ -98,11 +98,11 @@ _a = Users;
  */
 Users.authStrategy = new passport_local_1.Strategy((username, password, done) => {
     _a.find(username).then(user => {
-        if (user.password === password)
+        if (user && user.password === password)
             //This will set req.user as the authenticated user's username
             done(null, user);
         else
-            done(null, false, { message: "Incorrect password" });
+            done(null, false);
     }).catch(err => {
         done(err, false);
     });

@@ -40,8 +40,7 @@ passport.use(new jwtStrategy({
     }).catch((err) => {
         done(err, false);
     });
-
-}))
+}));
 
 /**
  * This function extract jwt from Request Auth Header and query the
@@ -52,7 +51,10 @@ export const authenticateWithJwt = passport.authenticate('jwt', { session: false
 /**
  * Handles user authentication with passport local strategy
  */
-export const authenticateWithLocal = passport.authenticate('local', { session: false });
+export const authenticateWithLocal = passport.authenticate('local', {
+    session: false,
+    failWithError: true, // The error set by passport will be handled
+});
 
 /**
  * Verify if the user is an administrator

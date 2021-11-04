@@ -47,7 +47,7 @@ export class Users {
         } else {
             return null;
         }
-        
+
     }
 
     /**
@@ -64,11 +64,11 @@ export class Users {
      */
     static readonly authStrategy = new LocalStrategy((username, password, done) => {
         this.find(username).then(user => {
-            if (user.password === password)
+            if (user && user.password === password)
                 //This will set req.user as the authenticated user's username
                 done(null, user);
             else
-                done(null, false, { message: "Incorrect password" });
+                done(null, false);
         }).catch(err => {
             done(err, false);
         })
@@ -80,7 +80,7 @@ export class Users {
      * @param activity the user's activity type(enum)
      * @param detail detailed description of the activity
      */
-    static async logUserActivity(username: string, activity: UserActivity, detail: string, ipAddress: string): Promise<void> {
+    static async logUserActivity(username: string | null, activity: UserActivity, detail: string, ipAddress: string): Promise<void> {
         await dbClient.query(`INSERT INTO user_activities(timestamp, username, activity_type, activity_detail, ip_addr)
          VALUES(current_timestamp, $1, $2, $3, $4)`,
             [username, activity, detail, ipAddress]);
