@@ -5,7 +5,7 @@ require("../../../sass/widgets/login.scss");
 exports.CSS = {
     root: "login esri-widget",
     container: 'login__container container',
-    header: "esri-widget__heading login__header",
+    heading: "esri-widget__heading login__heading",
     inputBox: "login__input-box",
     inputBoxLabel: "login__input-box-label",
     inputBoxInput: "login__input-box-input esri-input",

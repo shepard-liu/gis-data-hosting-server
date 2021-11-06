@@ -11,7 +11,7 @@ const router = express.Router();
 
 // For any file
 router.get(/.*/, (request, response, next) => {
-    
+
     let file = request.url.substring(1);
     if (file.length === 0) file = 'index.html';
 
@@ -29,6 +29,5 @@ router.get(/.*/, (request, response, next) => {
         }
     });
 });
-
 
 export default router;

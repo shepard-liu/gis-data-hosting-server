@@ -26,11 +26,12 @@ module.exports = {
         ]
     },
     entry: {
+        loading: './ui/src/loading.js',
         index: './ui/src/index.js',
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Development'
+            title: 'Development',
         }),
         new ArcGISWebpackPlugin(),
     ],

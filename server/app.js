@@ -19,12 +19,14 @@ exports.app = app;
 // Use passport
 app.use(passport.initialize());
 // Setting up server
-app.set('port', 3000);
+app.set('port', 80);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+//-------TEST--------//
+// app.all('*', (req, res, next) => {next()});
 // initialize routers
 app.use('/users', usersRouter_1.default);
 app.use('/api/data', dataRouter_1.default);

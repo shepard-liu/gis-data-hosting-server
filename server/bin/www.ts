@@ -7,15 +7,14 @@
 import { app } from '../app.js';
 import * as debug from 'debug';
 import * as http from 'http';
+import config from '../config';
 
 // Setting currect working directory
-
+const { port, hostname } = config;
 
 /**
  * Get port from environment and store in Express.
  */
-
-var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -29,10 +28,8 @@ var server = http.createServer(app);
  */
 
 // TODO: enable https
-var hostname: string = 'localhost';
-
-server.listen(port as number, 'localhost', () => {
-  console.log(`Server listening on ${hostname}:${port}`);
+server.listen(port, hostname, () => {
+  console.log(`Server listening on ${config.hostname}:${port}`);
 });
 server.on('error', onError);
 server.on('listening', onListening);

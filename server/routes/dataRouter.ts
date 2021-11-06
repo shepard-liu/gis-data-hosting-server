@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { authenticateWithJwt, authenticateWithAdmin } from '../auth/authenticate.js';
+import { authenticateWithJwt, authenticateWithAdmin, validateJwt } from '../auth/authenticate.js';
 import { Data, DatasetIndex, GISDatasetType } from '../util/data';
 import * as path from 'path'
 import * as fs from 'fs'
@@ -57,28 +57,41 @@ router.route('/').post(authenticateWithJwt, authenticateWithAdmin, (request, res
  * Handling dataset get request
  * 
  * request format: 
- * /data/:id
+ * /data/:id?token=xxxxxxxxxxxxxxxx
  * 
  * response format: 
  * header : content-disposition: ...
  * body   : dataset file (.zip)
  */
-router.route('/:id').get(authenticateWithJwt, (request, response, next) => {
-    Data.getDatasetFilePathById(Number(request.params.id)).then((filePath) => {
-        response.statusCode = 200;
-        response.setHeader('Content-Disposition', `attachment; filename = "${path.basename(filePath)}"`);
-        fs.readFile(filePath, (err, data) => {
-            if (err) console.log(err);
-            else response.end(data);
-        });
-    }).catch((err) => {
-        response.statusCode = 404;
-        response.setHeader('Content-Type', 'application/json');
-        response.json({
-            success: false,
-            message: 'Failed to locate the dataset file with given ID.'
-        });
-    })
+
+// Manually verify jwt credential
+router.route('/:id').get((request, response, next) => {
+    validateJwt(request.query.token as string).then((user) => {
+        if (!user) {
+            response.statusCode = 401;
+            response.setHeader('Content-Type', 'application/json');
+            response.json({
+                success: false,
+                message: 'Unauthorized'
+            });
+            return;
+        }
+        Data.getDatasetFilePathById(Number(request.params.id)).then((filePath) => {
+            response.statusCode = 200;
+            response.setHeader('Content-Disposition', `attachment; filename = "${path.basename(filePath)}"`);
+            fs.readFile(filePath, (err, data) => {
+                if (err) console.log(err);
+                else response.end(data);
+            });
+        }).catch((err) => {
+            response.statusCode = 404;
+            response.setHeader('Content-Type', 'application/json');
+            response.json({
+                success: false,
+                message: 'Failed to locate the dataset file with given ID.'
+            });
+        })
+    }).catch(console.log);
 })
 
 export default router;

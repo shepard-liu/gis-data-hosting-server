@@ -32,13 +32,15 @@ router.route('/login').post(authenticate_1.authenticateWithLocal, (request, resp
     users_1.Users.logUserActivity(request.user.username, users_1.UserActivity.Login, 'Successful', request.ip)
         .catch(console.log);
     // Configuring response
-    response.statusCode = 200;
-    response.setHeader('Content-Type', 'application/json');
-    response.json({
-        success: true,
-        token: (0, authenticate_1.generateJwt)(request.user.username),
-        message: "You've been logged in.",
-    });
+    (0, authenticate_1.generateJwt)(request.user.username).then(jwtString => {
+        response.statusCode = 200;
+        response.setHeader('Content-Type', 'application/json');
+        response.json({
+            success: true,
+            token: jwtString,
+            message: "You've been logged in.",
+        });
+    }).catch(console.log);
 }, (error, request, response, next) => {
     // Record the log-in activity in the database
     users_1.Users.logUserActivity(null, users_1.UserActivity.Login, 'Failed', request.ip)

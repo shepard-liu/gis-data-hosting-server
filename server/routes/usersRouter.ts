@@ -36,13 +36,16 @@ router.route('/login').post(
 			.catch(console.log);
 
 		// Configuring response
-		response.statusCode = 200;
-		response.setHeader('Content-Type', 'application/json');
-		response.json({
-			success: true,
-			token: generateJwt((<User>request.user).username),
-			message: "You've been logged in.",
-		});
+		generateJwt((<User>request.user).username).then(jwtString => {
+			response.statusCode = 200;
+			response.setHeader('Content-Type', 'application/json');
+			response.json({
+				success: true,
+				token: jwtString,
+				message: "You've been logged in.",
+			});
+		}).catch(console.log);
+		
 	}, (error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
 		// Record the log-in activity in the database
 		Users.logUserActivity(null, UserActivity.Login, 'Failed', request.ip)

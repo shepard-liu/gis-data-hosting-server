@@ -1,10 +1,10 @@
-import { tsx as jsx, renderable } from "@arcgis/core/widgets/support/widget";
+import { tsx as jsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
 import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
 
-import { CSS, i18n, assets } from './resource';
+import { CSS, i18n, assets } from './resources';
 import { LoginProperties } from "./interfaces";
-import { LoginViewModel } from "./loginViewModel";
+import LoginViewModel from "./loginViewModel";
 
 @subclass("ui.widgets.login")
 export default class Login extends Widget {
@@ -37,9 +37,6 @@ export default class Login extends Widget {
     ///////////////////////////////
 
     @property()
-    @renderable([
-        "viewModel.serverResponseMessage"
-    ])
     viewModel: LoginViewModel;
 
     @aliasOf('viewModel.username')
@@ -62,7 +59,7 @@ export default class Login extends Widget {
         return (
             <div class={CSS.root}>
                 <div class={this.classes(CSS.container)}>
-                    {this.renderHeader()}
+                    {this.renderHeading()}
                     {this.renderInputBox(i18n.labels.accountName, 'text', i18n.placeholders.accoutName, 'username')}
                     {this.renderInputBox(i18n.labels.password, 'password', i18n.placeholders.password, 'password')}
                     <div class="row">
@@ -77,9 +74,9 @@ export default class Login extends Widget {
         )
     }
 
-    renderHeader() {
+    renderHeading() {
         return (
-            <div class={this.classes(CSS.header)}>
+            <div class={this.classes(CSS.heading)}>
                 {i18n.login}
             </div>
         );

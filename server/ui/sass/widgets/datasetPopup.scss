@@ -1,0 +1,83 @@
+$brandColor: #007ac2;
+$fontSizeBase: 16px;
+$subHeadingFontSize: 16px;
+
+@import "base.scss";
+
+.dataset-popup {
+    font-family: "Avenir Next"; // Provided by Esri
+    font-size: $fontSizeBase;
+}
+
+.dataset-popup__container {
+}
+
+.dataset-popup__subheading {
+    color: $brandColor;
+    font-size: $subHeadingFontSize;
+    font-weight: 500;
+}
+
+// A seperator
+.dataset-popup__separator {
+    width: 100%;
+    margin-top: 10px;
+}
+
+// This is a horizental line
+.dataset-popup__separator-line {
+    width: 30%;
+    height: 1px;
+    border-top: 1px solid;
+    border-color: #666666;
+    margin: 5px 0 10px 0;
+}
+
+.dataset-popup__description {
+    color: #333333;
+    font-size: fontSizeBase;
+    text-align: justify;
+    margin-bottom: 10px;
+}
+
+.dataset-popup__info-tag {
+    text-align: right;
+    padding-right: 0 !important;
+    color: #666666;
+}
+
+.dataset-popup__info-value {
+    color: black;
+    padding-left: 5px !important;
+
+    @media (min-width: 0) and( max-width:$sm) {
+        text-align: right;
+    }
+    text-align: left;
+}
+
+%dataset-popup__button-wrapper {
+    padding: 20px 10px 10px 10px;
+}
+
+.dataset-popup__download-button-wrapper {
+    @extend %dataset-popup__button-wrapper;
+}
+
+.dataset-popup__preview-button-wrapper {
+    @extend %dataset-popup__button-wrapper;
+}
+
+.dataset-popup__download-button-wrapper-link {
+    text-decoration: none;
+}
+
+.dataset-popup__download-button {
+    width: 100%;
+    height: 100%;
+}
+
+.dataset-popup__preview-button {
+    width: 100%;
+    height: 100%;
+}

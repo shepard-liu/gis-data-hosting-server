@@ -54,29 +54,41 @@ router.route('/').post(authenticate_js_1.authenticateWithJwt, authenticate_js_1.
  * Handling dataset get request
  *
  * request format:
- * /data/:id
+ * /data/:id?token=xxxxxxxxxxxxxxxx
  *
  * response format:
  * header : content-disposition: ...
  * body   : dataset file (.zip)
  */
-router.route('/:id').get(authenticate_js_1.authenticateWithJwt, (request, response, next) => {
-    data_1.Data.getDatasetFilePathById(Number(request.params.id)).then((filePath) => {
-        response.statusCode = 200;
-        response.setHeader('Content-Disposition', `attachment; filename = "${path.basename(filePath)}"`);
-        fs.readFile(filePath, (err, data) => {
-            if (err)
-                console.log(err);
-            else
-                response.end(data);
+// Manually verify jwt credential
+router.route('/:id').get((request, response, next) => {
+    (0, authenticate_js_1.validateJwt)(request.query.token).then((user) => {
+        if (!user) {
+            response.statusCode = 401;
+            response.setHeader('Content-Type', 'application/json');
+            response.json({
+                success: false,
+                message: 'Unauthorized'
+            });
+            return;
+        }
+        data_1.Data.getDatasetFilePathById(Number(request.params.id)).then((filePath) => {
+            response.statusCode = 200;
+            response.setHeader('Content-Disposition', `attachment; filename = "${path.basename(filePath)}"`);
+            fs.readFile(filePath, (err, data) => {
+                if (err)
+                    console.log(err);
+                else
+                    response.end(data);
+            });
+        }).catch((err) => {
+            response.statusCode = 404;
+            response.setHeader('Content-Type', 'application/json');
+            response.json({
+                success: false,
+                message: 'Failed to locate the dataset file with given ID.'
+            });
         });
-    }).catch((err) => {
-        response.statusCode = 404;
-        response.setHeader('Content-Type', 'application/json');
-        response.json({
-            success: false,
-            message: 'Failed to locate the dataset file with given ID.'
-        });
-    });
+    }).catch(console.log);
 });
 exports.default = router;

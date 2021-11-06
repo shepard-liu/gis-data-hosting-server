@@ -2,10 +2,10 @@ import Accessor from '@arcgis/core/core/Accessor'
 import { subclass, property, aliasOf } from '@arcgis/core/core/accessorSupport/decorators';
 import { LoginResponseBody, LoginViewModelProperties } from './interfaces';
 import Request from '@arcgis/core/request';
-import * as auth from '../../auth'
+import AuthHelper from '../../util/authHelper';
 
 @subclass('ui.widgets.LoginViewModel')
-export class LoginViewModel extends Accessor
+export default class LoginViewModel extends Accessor
     implements LoginViewModelProperties {
 
     constructor() {
@@ -51,7 +51,8 @@ export class LoginViewModel extends Accessor
 
     @property()
     private loginRequestOpts: __esri.RequestOptions = {
-        body: "",
+        method: 'post',
+        body: "",   // Will be filled in later
         headers: {
             "Content-Type": "application/json"
         },
@@ -79,6 +80,6 @@ export class LoginViewModel extends Accessor
     }
 
     saveJwtCredential(jwt: string): void {
-        auth.setJwtCredential(jwt);
+        AuthHelper.instance().setJwtCredential(jwt);
     }
 }

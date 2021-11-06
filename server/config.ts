@@ -1,13 +1,23 @@
 type ServerConfig = {
-    [index: string]: any;
-    mime: {
-        [index:string]:string;
-    }
+    hostname: string,
+    port: number,
+    secretKey: string,
+    db: {
+        user: string,
+        host: string,
+        database: string,
+        password: string,
+        port: number,
+    },
+    jwtExpirationTime: number,
+    mime: MimeMap,
 }
 
-const config:ServerConfig = {
-    hostname: 'localhost',
-    port: 3000,
+type MimeMap = { [index: string]: string };
+
+const config: ServerConfig = {
+    hostname: '0.0.0.0',
+    port: 80,
 
     secretKey: "iusng8983hyhg29faxj28gr",
 
@@ -22,17 +32,23 @@ const config:ServerConfig = {
     jwtExpirationTime: 3600,
 
     mime: {
+        //Basic
         ".html": "text/html",
         ".js": "application/javascript",
         ".map": "application/json",
         ".json": "application/json",
         ".css": "text/css",
+        //Font MIME
         ".ttf": "application/octet-stream",
         ".wasm": "application/wasm",
         ".woff": "application/font-woff",
         ".woff2": "application/font-woff2",
         ".wsv": "application/octet-stream",
-        ".svg": "image/svg+xml"
+        //Image MIME
+        ".jpg": "image/jpeg",
+        ".svg": "image/svg+xml",
+        ".gif": "image/gif",
+        ".png": "image/png",
     }
 };
 

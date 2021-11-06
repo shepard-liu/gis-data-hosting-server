@@ -15,15 +15,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginViewModel = void 0;
 const Accessor_1 = require("@arcgis/core/core/Accessor");
 const decorators_1 = require("@arcgis/core/core/accessorSupport/decorators");
 const request_1 = require("@arcgis/core/request");
-const auth = require("../../auth");
+const authHelper_1 = require("../../util/authHelper");
 let LoginViewModel = class LoginViewModel extends Accessor_1.default {
     constructor() {
         super();
         this.loginRequestOpts = {
+            method: 'post',
             body: "",
             headers: {
                 "Content-Type": "application/json"
@@ -73,7 +73,7 @@ let LoginViewModel = class LoginViewModel extends Accessor_1.default {
         });
     }
     saveJwtCredential(jwt) {
-        auth.setJwtCredential(jwt);
+        authHelper_1.default.instance().setJwtCredential(jwt);
     }
 };
 __decorate([
@@ -94,4 +94,4 @@ __decorate([
 LoginViewModel = __decorate([
     (0, decorators_1.subclass)('ui.widgets.LoginViewModel')
 ], LoginViewModel);
-exports.LoginViewModel = LoginViewModel;
+exports.default = LoginViewModel;

@@ -35,7 +35,17 @@ class Data {
      */
     static getDatasetIndices() {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = yield pgServer_1.dbClient.query(`SELECT id, ST_AsText(extent) AS extent, layer_url, item_id, type, description FROM gis_data_index`);
+            let result = yield pgServer_1.dbClient.query(`SELECT 
+        id,
+        ST_AsGeoJson(extent) AS extent,
+        layer_url,
+        item_id,
+        type,
+        description,
+        name,
+        acquisition_time,
+        file_size
+        FROM gis_data_index`);
             return result.rows;
         });
     }
@@ -45,13 +55,25 @@ class Data {
      */
     static addDatasetIndex(datasetIndex) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield pgServer_1.dbClient.query(`INSERT INTO gis_data_index(extent, file_path, layer_url, item_id, type, description)
-        VALUES($1, $2, $3, $4, $5, $6)`, [
+            yield pgServer_1.dbClient.query(`INSERT INTO gis_data_index(
+            extent,
+            file_path,
+            layer_url,
+            item_id,
+            type,
+            description,
+            name,
+            acquisition_time,
+            file_size)
+        VALUES(ST_FromGeoJson($1), $2, $3, $4, $5, $6, $7, $8, $9)`, [
                 datasetIndex.extent,
                 datasetIndex.file_path,
                 datasetIndex.layer_url,
                 datasetIndex.type,
-                datasetIndex.description
+                datasetIndex.description,
+                datasetIndex.name,
+                datasetIndex.acquisition_time,
+                datasetIndex.file_size
             ]);
         });
     }

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = {
-    hostname: 'localhost',
-    port: 3000,
+    hostname: '0.0.0.0',
+    port: 80,
     secretKey: "iusng8983hyhg29faxj28gr",
     db: {
         user: "postgres",
@@ -13,17 +13,23 @@ const config = {
     },
     jwtExpirationTime: 3600,
     mime: {
+        //Basic
         ".html": "text/html",
         ".js": "application/javascript",
         ".map": "application/json",
         ".json": "application/json",
         ".css": "text/css",
+        //Font MIME
         ".ttf": "application/octet-stream",
         ".wasm": "application/wasm",
         ".woff": "application/font-woff",
         ".woff2": "application/font-woff2",
         ".wsv": "application/octet-stream",
-        ".svg": "image/svg+xml"
+        //Image MIME
+        ".jpg": "image/jpeg",
+        ".svg": "image/svg+xml",
+        ".gif": "image/gif",
+        ".png": "image/png",
     }
 };
 exports.default = config;

@@ -18,12 +18,17 @@ passport.use(Users.authStrategy);
  * @param username the payload of jwt
  * @return signed jwt 
  */
-export function generateJwt(username: string): string {
-    return jwt.sign({
-        username,
-        iat: Date.now()
-    }, config.secretKey, {
-        expiresIn: config.jwtExpirationTime
+export function generateJwt(username: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        jwt.sign({
+            username,
+            iat: Date.now()
+        }, config.secretKey, {
+            expiresIn: config.jwtExpirationTime
+        }, (err, jwtString) => {
+            if (err) reject(err);
+            else resolve(jwtString);
+        });
     });
 };
 
@@ -32,7 +37,7 @@ passport.use(new jwtStrategy({
     secretOrKey: config.secretKey,
     jwtFromRequest: jwtExtractor.fromAuthHeaderAsBearerToken()
 }, (payload, done) => {
-    let { username, iat } = payload as JwtPayload;
+    const { username, iat } = payload as JwtPayload;
 
     Users.find(username).then((user) => {
         if (user && (user.last_logout || 0) < iat) done(null, user);
@@ -41,6 +46,31 @@ passport.use(new jwtStrategy({
         done(err, false);
     });
 }));
+
+/**
+ * A manual validation method
+ * @param jwtString jwt credential
+ * @returns username if verified, false otherwise
+ */
+export function validateJwt(jwtString: string): Promise<User | boolean> {
+    return new Promise<User | boolean>((resolve, reject) => {
+        jwt.verify(jwtString, config.secretKey, (err, decodedObject) => {
+            if (err) resolve(false);    // Invalid jwt or expired jwt
+            else {
+                // Validate user from the users database table
+                const { username, iat } = decodedObject as JwtPayload;
+
+                // Check if the user exists, and if he/she has logged out before expiration
+                Users.find(username).then((user) => {
+                    if (user && (user.last_logout || 0) < iat) resolve(user);
+                    else resolve(false);
+                }).catch((err) => {
+                    reject(err);
+                });
+            }
+        });
+    });
+}
 
 /**
  * This function extract jwt from Request Auth Header and query the
