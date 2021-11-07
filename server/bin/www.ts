@@ -4,15 +4,17 @@
  * Module dependencies.
  */
 
-import { app } from '../app';
-import { debug } from 'debug';
+import { app } from '../app.js';
+import * as debug from 'debug';
 import * as http from 'http';
+import config from '../config';
+
+// Setting currect working directory
+const { port, hostname } = config;
 
 /**
  * Get port from environment and store in Express.
  */
-
-var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -26,10 +28,8 @@ var server = http.createServer(app);
  */
 
 // TODO: enable https
-var hostname: string = 'localhost';
-
-server.listen(port, 'localhost', () => {
-  console.log(`Server listening on ${hostname}:${port}`);
+server.listen(port, hostname, () => {
+  console.log(`Server listening on ${config.hostname}:${port}`);
 });
 server.on('error', onError);
 server.on('listening', onListening);
@@ -38,7 +38,7 @@ server.on('listening', onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+function normalizePort(val: string) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -58,7 +58,7 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+function onError(error: any) {
   if (error.syscall !== 'listen') {
     throw error;
   }

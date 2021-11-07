@@ -1,21 +1,36 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var users_1 = require("./routes/users");
-var app = express();
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const passport = require("passport");
+const usersRouter_1 = require("./routes/usersRouter");
+const dataRouter_1 = require("./routes/dataRouter");
+const staticRouter_1 = require("./routes/staticRouter");
+const app = express();
 exports.app = app;
+// // Configuring Webpack development server
+// import webpackConfig from './webpack.config';
+// const webpackCompiler = webpack(webpackConfig as webpack.Configuration);
+// app.use(webpackDevMiddleware(webpackCompiler, {
+//   publicPath: webpackConfig.output.publicPath,
+// }));
+// Use passport
+app.use(passport.initialize());
 // Setting up server
-app.set('port', 3000);
+app.set('port', 80);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/users', users_1.usersRouter);
+//-------TEST--------//
+// app.all('*', (req, res, next) => {next()});
+// initialize routers
+app.use('/users', usersRouter_1.default);
+app.use('/api/data', dataRouter_1.default);
+app.use('/', staticRouter_1.default);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));
@@ -25,6 +40,7 @@ app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
+    console.log(err);
     // render the error page
     res.status(err.status || 500);
     res.render('error');

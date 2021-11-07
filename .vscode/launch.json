@@ -8,16 +8,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "cwd": "${workspaceFolder}\\server",
             "program": "${workspaceFolder}\\server\\bin\\www.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
         },
-        {
-            "type": "node-terminal",
-            "name": "JavaScript Debug Terminal",
-            "request": "launch",
-            "cwd": "${workspaceFolder}"
-        }
     ]
 }

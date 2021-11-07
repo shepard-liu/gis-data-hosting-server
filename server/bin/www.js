@@ -3,26 +3,27 @@
 /**
  * Module dependencies.
  */
-exports.__esModule = true;
-var app_1 = require("../app");
-var debug_1 = require("debug");
-var http = require("http");
+Object.defineProperty(exports, "__esModule", { value: true });
+const app_js_1 = require("../app.js");
+const debug = require("debug");
+const http = require("http");
+const config_1 = require("../config");
+// Setting currect working directory
+const { port, hostname } = config_1.default;
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || '3000');
-app_1.app.set('port', port);
+app_js_1.app.set('port', port);
 /**
  * Create HTTP server.
  */
-var server = http.createServer(app_1.app);
+var server = http.createServer(app_js_1.app);
 /**
  * Listen on provided port, on all network interfaces.
  */
 // TODO: enable https
-var hostname = 'localhost';
-server.listen(port, 'localhost', function () {
-    console.log("Server listening on " + hostname + ":" + port);
+server.listen(port, hostname, () => {
+    console.log(`Server listening on ${config_1.default.hostname}:${port}`);
 });
 server.on('error', onError);
 server.on('listening', onListening);
@@ -73,5 +74,5 @@ function onListening() {
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    (0, debug_1.debug)('data-server:server')('Listening on ' + bind);
+    debug('data-server:server')('Listening on ' + bind);
 }

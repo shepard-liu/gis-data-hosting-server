@@ -1,0 +1,98 @@
+@import "@arcgis/core/assets/esri/css/main.css";
+
+/* make sure that the mapview take up all the page */
+html,
+body,
+.view-table-container {
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#mainViewDiv {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+#loading {
+    width: 100%;
+    height: 20%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#tableContainer {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+%seperator {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.horizental-seperator {
+    @extend %seperator;
+    cursor: ns-resize;
+}
+
+.vertical-seperator {
+    @extend %seperator;
+    cursor: ew-resize;
+}
+
+#main-view-table-preview-seperator {
+    height: 100%;
+}
+
+%seperator-hint {
+    border-radius: 3px;
+    background-color: #888888;
+    transition: width 500ms, background-color 500ms, height 500ms;
+}
+
+%seperator-hint:hover {
+    background-color: #666666;
+    transition: width 500ms, background-color 500ms, height 500ms;
+}
+
+.horizental-seperator-hint {
+    @extend %seperator-hint;
+    width: 12%;
+    height: 80%;
+}
+
+.horizental-seperator-hint:hover {
+    @extend %seperator-hint, :hover;
+    width: 18%;
+    height: 100%;
+}
+
+.vertical-seperator-hint {
+    @extend %seperator-hint;
+    width: 80%;
+    height: 12%;
+}
+
+.vertical-seperator-hint:hover {
+    @extend %seperator-hint, :hover;
+    width: 100%;
+    height: 18%;
+}
+
+/* A workaround for not properly loaded Calcite Web Core Icons*/
+@font-face {
+    font-family: "CalciteWebCoreIcons";
+    src: url("@arcgis/core/assets/esri/themes/base/icons/fonts/CalciteWebCoreIcons.ttf"),
+        url("@arcgis/core/assets/esri/themes/base/icons/fonts/CalciteWebCoreIcons.woff");
+}
+
+* {
+    box-sizing: border-box;
+}
