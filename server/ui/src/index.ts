@@ -5,9 +5,17 @@
 //Create viewDiv for map, tableDiv for feature table
 import { defineElement } from './util/dom';
 
-document.body.appendChild(defineElement('div', 'viewDiv'));
-document.body.appendChild(defineElement('div', 'tableContainer'))
-    .appendChild(defineElement('div', 'tableDiv'));
+const mainViewTableContainer = defineElement('div', 'mainView-table-container', 'view-table-container');
+const mainViewElement = defineElement('div', 'mainViewDiv');
+const tableContainerElement = defineElement('div', 'tableContainer');
+const tableElement = defineElement('div', 'tableDiv');
+//preview sceneview element will be added to be dom when previewing items
+const preViewElement = defineElement('div', 'preViewDiv');
+mainViewTableContainer.appendChild(mainViewElement);
+mainViewTableContainer.appendChild(tableContainerElement)
+    .appendChild(tableElement);
+document.body.appendChild(mainViewTableContainer);
+document.body.appendChild(preViewElement);
 
 //-------------------------------------
 //    Import Modules
@@ -26,10 +34,14 @@ import DataManager from './util/dataManager';
 import FeatureTable from '@arcgis/core/widgets/FeatureTable';
 import DatasetPopup from './widgets/popup/datasetPopup';
 import { DatasetIndexGraphic } from './widgets/popup/interfaces';
+import { createSeperatorBar } from './util/seperator';
+import WebScene from '@arcgis/core/WebScene';
+import LayerList from '@arcgis/core/widgets/LayerList';
 
 // After module loaded, remove loader
-document.getElementById('loader').remove();
-document.getElementById('viewDiv').style.height = '100%';
+document.getElementById('loading').remove();
+mainViewElement.style.height = '100%';
+preViewElement.style.width = '0%';
 
 //-----------------------------------------------
 //    Initialize Map and View before login
@@ -38,15 +50,20 @@ document.getElementById('viewDiv').style.height = '100%';
 // Set asset path to local
 esriConfig.assetsPath = "./assets";
 
-const map = new EsriMap({
+const mainMap = new EsriMap({
     basemap: "osm", // Can be accessed without api-key
 });
 
-const view = new SceneView({
-    container: "viewDiv",
-    map: map,
+const mainView = new SceneView({
+    container: mainViewElement as HTMLDivElement,
+    map: mainMap,
     zoom: 1,
 });
+
+const preView = new SceneView({
+    container: preViewElement as HTMLDivElement,
+    map: null,
+})
 
 let featureTable: __esri.FeatureTable;
 
@@ -55,7 +72,7 @@ let featureTable: __esri.FeatureTable;
 //-----------------------------------------------
 
 const authHelper = AuthHelper.instance();
-authHelper.createNewLoginSession(view, true);
+authHelper.createNewLoginSession(mainView, true);
 
 //-----------------------------------------------
 //    Main Logic after login
@@ -81,23 +98,34 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
     // asyncronously fetch dataset index list and bind feature layer to feature table and map
     const datasetIndexFeatureLayer = await DataManager.getDatasetIndexFeatureLayer();
 
-    map.add(datasetIndexFeatureLayer);
+    mainMap.add(datasetIndexFeatureLayer);
 
     featureTable = new FeatureTable({
         layer: datasetIndexFeatureLayer,
-        view: view,
-        container: "tableDiv",
+        view: mainView,
+        container: tableElement,
         fieldConfigs: DataManager.datasetIndexFields as __esri.FieldColumnConfigProperties[]
     });
 
-    // make space for feature table
-    document.getElementById('tableContainer').style.height = '40%';
-    document.getElementById('viewDiv').style.height = '60%';
+    //-------------------------------------------
+    //  Create seperator bar for view and table
+    //-------------------------------------------
+    tableContainerElement.style.height = '40%';
+    mainViewElement.style.height = '60%';
+    createSeperatorBar(
+        'view-table-seperator',
+        'horizental-seperator',
+        'horizental',
+        [mainViewElement, tableContainerElement],
+        20, 80,
+        8
+    );
 
     //-------------------------------------
     // bind view popup with feature table
     //-------------------------------------
-    const popupViewModel = view.popup.viewModel;
+
+    const popupViewModel = mainView.popup.viewModel;
     // To prevent the popup content being constructed twice when
     // user clicks to trigger the popup widget
     let noOpenFlag = false;
@@ -132,26 +160,74 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
             const spliced = selectedFeatures.splice(selectedFeatures.findIndex((graphic) => graphic == item.feature), 1);
             // if the removed feature is now being displayed, set popup
             if (spliced[0] == popupViewModel.selectedFeature)
-                view.popup.close();
+                mainView.popup.close();
         });
 
         // Show and switch popups when there are selected features
         if (selectedFeatures.length) {
             if (!noOpenFlag) {
                 // Construct a array of dataset popups
-                view.popup.open({
+                mainView.popup.open({
                     // I have no idea why I need to 'clone' the array before passing it to the features
                     // It's more like rearranging the memory but not cloning
                     features: selectedFeatures.map(elem => elem),
                     updateLocationEnabled: true
                 });
-                console.log('opening')
             }
         } else {
             // Close when there's none selected
-            view.popup.close();
+            mainView.popup.close();
         }
 
         noOpenFlag = false;
     });
+
+    //--------------------------------
+    //  On previewing dataset
+    //--------------------------------
+
+    let vertialSeperatorElement: HTMLElement = null;
+    watchHandlers.push(DatasetPopup.currentPreview.watch('graphic', (value) => {
+        if (!value) return;
+        //------------------------------------
+        //  Attach scene view with item
+        //------------------------------------
+        const graphic = value as DatasetIndexGraphic;
+        const { type, name, id, item_id } = graphic.attributes;
+
+        if (type === 'BIM') {
+            // Specify webscene
+            const bimScene = new WebScene({
+                portalItem: {
+                    id: item_id,
+                }
+            });
+
+            const layerListWidget = new LayerList({
+                view: preView,
+            })
+            //Attach with scene view
+            preView.map = bimScene;
+            preView.ui.add(layerListWidget,'top-right');
+        }
+
+        // Make space for preview scene view element
+        if (!vertialSeperatorElement) {
+            mainViewTableContainer.style.width = '50%';
+            preViewElement.style.width = '50%';
+            preViewElement.style.height = '100%';
+            document.body.style.display = 'flex';
+            vertialSeperatorElement = createSeperatorBar(
+                'main-view-table-preview-seperator',
+                'vertical-seperator',
+                'vertical',
+                [mainViewTableContainer, preViewElement],
+                10, 90,
+                8
+            );
+        } else {
+
+        }
+
+    }));
 });

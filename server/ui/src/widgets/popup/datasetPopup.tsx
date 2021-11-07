@@ -1,5 +1,6 @@
 import { tsx as jsx } from "@arcgis/core/widgets/support/widget";
 import Widget from "@arcgis/core/widgets/Widget";
+import Accessor from '@arcgis/core/core/Accessor';
 import { subclass, property, aliasOf } from "@arcgis/core/core/accessorSupport/decorators";
 
 import { CSS, i18n, assets } from './resources';
@@ -11,13 +12,33 @@ import AuthHelper from "../../util/authHelper";
 
 import DataManager from '../../util/dataManager';
 
+// A singleton class for watching the change of current preview graphic
+@subclass('ui.datasetPopup.graphicwrapper')
+class GraphicWrapper extends Accessor {
+    private constructor() {
+        super();
+    }
+
+    @property()
+    public graphic: DatasetIndexGraphic = null;
+
+    @property()
+    private static _instance: GraphicWrapper = null;
+
+    public static instance() {
+        return GraphicWrapper._instance ?
+            GraphicWrapper._instance :
+            GraphicWrapper._instance = new GraphicWrapper();
+    }
+}
+
+@subclass('ui.datasetPopup')
 export default class DatasetPopup extends Widget
     implements DatasetPopupProperties {
 
     constructor(params?: DatasetPopupProperties) {
         super(params);
         this.set(params);
-        console.log('constucted ', params.graphic.attributes.name);
     }
 
     @property()
@@ -45,6 +66,9 @@ export default class DatasetPopup extends Widget
             outFields: ['*'],
         })]
     });
+
+    @property()
+    public static currentPreview: GraphicWrapper = GraphicWrapper.instance();
 
     render() {
         const attribs = this.graphic.attributes;
@@ -132,6 +156,6 @@ export default class DatasetPopup extends Widget
     }
 
     private _onPreviewButtonClicked() {
-        alert(i18n.messages.previewNotAvailable);
+        DatasetPopup.currentPreview.graphic = this.graphic;
     }
 }
