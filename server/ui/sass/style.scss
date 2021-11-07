@@ -14,8 +14,9 @@ body {
     width: 100%;
 }
 
-#loader {
+#loading {
     width: 100%;
+    height: 20%;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -26,6 +27,20 @@ body {
     padding: 0;
     margin: 0;
     width: 100%;
+}
+
+%seperator {
+    background-color: blue;
+}
+
+.horizental-seperator {
+    @extend %seperator;
+    cursor: ns-resize;
+}
+
+.vertical-seperator{
+    @extend %seperator;
+    cursor: ew-resize;
 }
 
 /* A workaround for not properly loaded Calcite Web Core Icons*/

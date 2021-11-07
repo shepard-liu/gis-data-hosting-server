@@ -14,9 +14,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 //Create viewDiv for map, tableDiv for feature table
 const dom_1 = require("./util/dom");
-document.body.appendChild((0, dom_1.defineElement)('div', 'viewDiv'));
-document.body.appendChild((0, dom_1.defineElement)('div', 'tableContainer'))
-    .appendChild((0, dom_1.defineElement)('div', 'tableDiv'));
+const viewDivElement = (0, dom_1.defineElement)('div', 'viewDiv');
+const tableContainerElement = (0, dom_1.defineElement)('div', 'tableContainer');
+const tableDivElement = (0, dom_1.defineElement)('div', 'tableDiv');
+document.body.appendChild(viewDivElement);
+document.body.appendChild(tableContainerElement)
+    .appendChild(tableDivElement);
 //-------------------------------------
 //    Import Modules
 //-------------------------------------
@@ -31,9 +34,10 @@ const authHelper_1 = require("./util/authHelper");
 const dataManager_1 = require("./util/dataManager");
 const FeatureTable_1 = require("@arcgis/core/widgets/FeatureTable");
 const datasetPopup_1 = require("./widgets/popup/datasetPopup");
+const seperator_1 = require("./util/seperator");
 // After module loaded, remove loader
-document.getElementById('loader').remove();
-document.getElementById('viewDiv').style.height = '100%';
+document.getElementById('loading').remove();
+viewDivElement.style.height = '100%';
 //-----------------------------------------------
 //    Initialize Map and View before login
 //-----------------------------------------------
@@ -43,7 +47,7 @@ const map = new Map_1.default({
     basemap: "osm", // Can be accessed without api-key
 });
 const view = new SceneView_1.default({
-    container: "viewDiv",
+    container: viewDivElement,
     map: map,
     zoom: 1,
 });
@@ -74,12 +78,15 @@ authHelper.watch('loginStatus', (value) => __awaiter(void 0, void 0, void 0, fun
     featureTable = new FeatureTable_1.default({
         layer: datasetIndexFeatureLayer,
         view: view,
-        container: "tableDiv",
+        container: tableDivElement,
         fieldConfigs: dataManager_1.default.datasetIndexFields
     });
-    // make space for feature table
+    //-------------------------------------------
+    //  Create seperator bar for view and table
+    //-------------------------------------------
     document.getElementById('tableContainer').style.height = '40%';
     document.getElementById('viewDiv').style.height = '60%';
+    (0, seperator_1.createSeperatorBar)('view-table-seperator', 'horizental-seperator', 'horizental', [viewDivElement, tableContainerElement], 20, 80, 10);
     //-------------------------------------
     // bind view popup with feature table
     //-------------------------------------

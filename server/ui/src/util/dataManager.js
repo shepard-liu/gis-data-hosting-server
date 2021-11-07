@@ -63,7 +63,6 @@ let DataManager = DataManager_1 = class DataManager extends Accessor_1.default {
                     popupTemplate: datasetPopup_1.default.popupTemplate
                 }));
             });
-            console.log(datasetPopup_1.default.popupTemplate);
             // Load graphics into feature layer
             const featureLayer = new FeatureLayer_1.default({
                 title: "Dataset Index list",

@@ -5,9 +5,12 @@
 //Create viewDiv for map, tableDiv for feature table
 import { defineElement } from './util/dom';
 
-document.body.appendChild(defineElement('div', 'viewDiv'));
-document.body.appendChild(defineElement('div', 'tableContainer'))
-    .appendChild(defineElement('div', 'tableDiv'));
+const viewDivElement = defineElement('div', 'viewDiv');
+const tableContainerElement = defineElement('div', 'tableContainer');
+const tableDivElement = defineElement('div', 'tableDiv');
+document.body.appendChild(viewDivElement);
+document.body.appendChild(tableContainerElement)
+    .appendChild(tableDivElement);
 
 //-------------------------------------
 //    Import Modules
@@ -26,10 +29,11 @@ import DataManager from './util/dataManager';
 import FeatureTable from '@arcgis/core/widgets/FeatureTable';
 import DatasetPopup from './widgets/popup/datasetPopup';
 import { DatasetIndexGraphic } from './widgets/popup/interfaces';
+import { createSeperatorBar } from './util/seperator';
 
 // After module loaded, remove loader
-document.getElementById('loader').remove();
-document.getElementById('viewDiv').style.height = '100%';
+document.getElementById('loading').remove();
+viewDivElement.style.height = '100%';
 
 //-----------------------------------------------
 //    Initialize Map and View before login
@@ -43,7 +47,7 @@ const map = new EsriMap({
 });
 
 const view = new SceneView({
-    container: "viewDiv",
+    container: viewDivElement as HTMLDivElement,
     map: map,
     zoom: 1,
 });
@@ -86,13 +90,24 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
     featureTable = new FeatureTable({
         layer: datasetIndexFeatureLayer,
         view: view,
-        container: "tableDiv",
+        container: tableDivElement,
         fieldConfigs: DataManager.datasetIndexFields as __esri.FieldColumnConfigProperties[]
     });
 
-    // make space for feature table
+    //-------------------------------------------
+    //  Create seperator bar for view and table
+    //-------------------------------------------
     document.getElementById('tableContainer').style.height = '40%';
     document.getElementById('viewDiv').style.height = '60%';
+    createSeperatorBar(
+        'view-table-seperator',
+        'horizental-seperator',
+        'horizental',
+        [viewDivElement, tableContainerElement],
+        20, 80,
+        10
+    );
+
 
     //-------------------------------------
     // bind view popup with feature table

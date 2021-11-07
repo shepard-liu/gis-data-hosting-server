@@ -97,7 +97,6 @@ export default class DataManager extends Accessor implements DataManagerProperti
                 popupTemplate: DatasetPopup.popupTemplate
             }))
         });
-        console.log(DatasetPopup.popupTemplate)
 
         // Load graphics into feature layer
         const featureLayer = new FeatureLayer({
