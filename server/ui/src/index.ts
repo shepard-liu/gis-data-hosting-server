@@ -30,6 +30,20 @@ import FeatureTable from '@arcgis/core/widgets/FeatureTable';
 import DatasetPopup from './widgets/popup/datasetPopup';
 import { DatasetIndexGraphic } from './widgets/popup/interfaces';
 import { createSeperatorBar } from './util/seperator';
+<<<<<<< Updated upstream
+=======
+import WebScene from '@arcgis/core/WebScene';
+import LayerList from '@arcgis/core/widgets/LayerList';
+import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
+import Slice from '@arcgis/core/widgets/Slice';
+import Expand from '@arcgis/core/widgets/Expand';
+import AreaMeasurement3D from '@arcgis/core/widgets/AreaMeasurement3D';
+import Daylight from '@arcgis/core/widgets/Daylight';
+import Legend from '@arcgis/core/widgets/Legend';
+import Home from '@arcgis/core/widgets/Home';
+// import { Debug, initializeDebugger } from './util/debugger';
+// initializeDebugger();
+>>>>>>> Stashed changes
 
 // After module loaded, remove loader
 document.getElementById('loading').remove();
@@ -169,4 +183,114 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
 
         noOpenFlag = false;
     });
+<<<<<<< Updated upstream
+=======
+
+    //--------------------------------
+    //  On previewing dataset
+    //--------------------------------
+
+    let isPreviewInitialized: boolean = false;
+    watchHandlers.push(DatasetPopup.currentPreview.watch('graphic', (value) => {
+        if (!value) return;
+        //------------------------------------
+        //  Attach scene view with item
+        //------------------------------------
+        const graphic = value as DatasetIndexGraphic;
+        const { type, name, id, item_id, layer_url } = graphic.attributes;
+        if ((!item_id || item_id.length === 0) && (!layer_url || layer_url.length === 0)) {
+            alert('This dataset is currently not previewable.');
+            return;
+        }
+
+        if (type === 'BIM') {
+
+            // Specify webscene
+            const bimScene = new WebScene({
+                portalItem: {
+                    id: item_id,
+                }
+            });
+
+            //Attach with scene view
+            preView.map = bimScene;
+
+        } else if (type === 'Vector') {
+
+            const previewFeatureLayer = new FeatureLayer({
+                url: layer_url,
+            });
+
+            preView.map = new EsriMap({
+                layers: [previewFeatureLayer],
+                basemap: 'osm'
+            });
+        }
+
+        // Make space for preview scene view element
+        if (!isPreviewInitialized) {
+            mainViewTableContainer.style.width = '50%';
+            preViewElement.style.width = '50%';
+            preViewElement.style.height = '100%';
+            document.body.style.display = 'flex';
+            createSeperatorBar(
+                'main-view-table-preview-seperator',
+                'vertical-seperator',
+                'vertical',
+                [mainViewTableContainer, preViewElement],
+                10, 90,
+                8
+            );
+            isPreviewInitialized = true;
+
+            // Initializing tools
+            const expandWidgets: Expand[] = [];
+
+            expandWidgets.push(
+                new Expand({
+                    content: new LayerList({ view: preView }),
+                    expandIconClass: 'esri-icon-layer-list',
+                    view: preView
+                }),
+                new Expand({
+                    content: new Slice({ view: preView }),
+                    expandIconClass: 'esri-icon-slice',
+                    view: preView,
+                }),
+                new Expand({
+                    content: new AreaMeasurement3D({ view: preView, }),
+                    expandIconClass: 'esri-icon-measure-area',
+                    view: preView,
+                }),
+                new Expand({
+                    content: new Daylight({ view: preView }),
+                    expandIconClass: 'esri-icon-lightbulb',
+                    view: preView,
+                }),
+                new Expand({
+                    content: new Legend({ view: preView }),
+                    expandIconClass: 'esri-icon-legend',
+                    view: preView,
+                })
+            );
+
+            expandWidgets.forEach((currentExpand) => {
+                currentExpand.watch('expanded', (isExpanded) => {
+                    if (isExpanded) {
+                        //Fold all other widgets
+                        expandWidgets.forEach(widget => {
+                            if (widget !== currentExpand)
+                                widget.collapse();
+                        })
+                    }
+                });
+                preView.ui.add(currentExpand, 'top-right');
+            });
+
+            // Add home widget
+            preView.ui.add(new Home({ view: preView }), 'top-left');
+        }
+
+    }));
+>>>>>>> Stashed changes
 });
