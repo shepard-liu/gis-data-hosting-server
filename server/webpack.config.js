@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ArcGISWebpackPlugin = require('@arcgis/webpack-plugin');
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     module: {
         rules: [
             {
