@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSeperatorBar = void 0;
 const dom_1 = require("./dom");
+//import { //Debug } from './//Debugger';
 /**
  * Creates a movable separator bar element
  *
@@ -58,32 +59,140 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
     //         bar.style.paddingRight = compensation + 'px';
     //     }
     // }
-    // implement functionality
-    let mouseDownX = 0;
-    let mouseDownY = 0;
+    // moving parameters
+    let mouseLastX = 0;
+    let mouseLastY = 0;
     let dragging = false;
+<<<<<<< Updated upstream
     // record the position when mouse is pressed down
+=======
+    // record the original size the three elements combined
+    let originalHeight = olderSibling.offsetHeight + youngerSibling.offsetHeight;
+    let originalWidth = olderSibling.offsetWidth + youngerSibling.offsetWidth;
+    function moveInitialize(posX, posY) {
+        dragging = true;
+        mouseLastX = posX;
+        mouseLastY = posY;
+        //Debug('initialized');
+    }
+    function moveFinalize() {
+        dragging = false;
+        //Debug('finalize');
+    }
+    function moving(posX, posY) {
+        if (!dragging)
+            return;
+        //Debug('moving');
+        // Calculate delta
+        let deltaX = posX - mouseLastX;
+        let deltaY = posY - mouseLastY;
+        mouseLastX = posX;
+        mouseLastY = posY;
+        if (direction === 'horizental') {
+            const positionPercentage = olderSibling.offsetHeight / (olderSibling.offsetHeight + youngerSibling.offsetHeight) * 100;
+            if ((positionPercentage <= minPositionPercentage && deltaY < 0) ||
+                (positionPercentage >= maxPositionPercentage && deltaY > 0))
+                return;
+            // Adjust sibling
+            let newOlderHeight = olderSibling.offsetHeight + deltaY;
+            olderSibling.style.height = newOlderHeight + 'px';
+            youngerSibling.style.height = originalHeight - newOlderHeight + 'px';
+            // In case that it crosses the max/min position
+            if (positionPercentage < minPositionPercentage) {
+                olderSibling.style.height = minPositionPercentage + 1 + '%';
+                youngerSibling.style.height = (100 - minPositionPercentage) + '%';
+            }
+            else if (positionPercentage > maxPositionPercentage) {
+                olderSibling.style.height = maxPositionPercentage - 1 + '%';
+                youngerSibling.style.height = (100 - maxPositionPercentage) + '%';
+            }
+        }
+        else {
+            const positionPercentage = olderSibling.offsetWidth / (olderSibling.offsetWidth + youngerSibling.offsetWidth) * 100;
+            if ((positionPercentage <= minPositionPercentage && deltaX < 0) ||
+                (positionPercentage >= maxPositionPercentage && deltaX > 0))
+                return;
+            // Adjust sibling
+            let newOlderWidth = olderSibling.offsetWidth + deltaX;
+            olderSibling.style.width = newOlderWidth + 'px';
+            youngerSibling.style.width = originalWidth - newOlderWidth + 'px';
+            // In case that it crosses the max/min position
+            if (positionPercentage < minPositionPercentage) {
+                olderSibling.style.width = minPositionPercentage + 1 + '%';
+                youngerSibling.style.width = (100 - minPositionPercentage) + '%';
+            }
+            else if (positionPercentage > maxPositionPercentage) {
+                olderSibling.style.width = maxPositionPercentage - 1 + '%';
+                youngerSibling.style.width = (100 - maxPositionPercentage) + '%';
+            }
+        }
+    }
+    //----------------------------------------------------------------
+    //          Move Initializer Event
+    //----------------------------------------------------------------
+>>>>>>> Stashed changes
     bar.addEventListener('mousedown', (event) => {
-        console.log(event.button);
+        //Debug('mousedown');
         if (event.button === 0) {
+<<<<<<< Updated upstream
             dragging = true;
             mouseDownX = event.clientX;
             mouseDownY = event.clientY;
+=======
+            moveInitialize(event.clientX, event.clientY);
         }
     });
+    bar.addEventListener('touchstart', (event) => {
+        //Debug('touchstart');
+        if (event.touches.length > 1) {
+            moveFinalize();
+            return;
+>>>>>>> Stashed changes
+        }
+        moveInitialize(event.touches[0].clientX, event.touches[0].clientY);
+    });
+<<<<<<< Updated upstream
     // reset when release mouse button
     document.body.addEventListener('mouseup', (event) => {
         if (event.buttons === 0) {
             console.log(dragging);
             dragging = false;
+=======
+    //----------------------------------------------------------------
+    //          Move Finalizer Event
+    //----------------------------------------------------------------
+    document.addEventListener('mouseup', (event) => {
+        //Debug('mouseup');
+        if (event.buttons === 0) {
+            moveFinalize();
+>>>>>>> Stashed changes
         }
         else {
             event.stopImmediatePropagation();
         }
     });
+<<<<<<< Updated upstream
+=======
+    // reset when mouse go out of document body
+    document.addEventListener('mouseleave', (event) => {
+        //Debug('mouseleave');
+        moveFinalize();
+        event.stopImmediatePropagation();
+    });
+    document.addEventListener('touchend', event => {
+        //Debug('touchend');
+        moveFinalize();
+        event.stopImmediatePropagation();
+    });
+    //----------------------------------------------------------------
+    //          Move Triggering Event
+    //----------------------------------------------------------------
+>>>>>>> Stashed changes
     // adjust siblings when dragging
-    document.body.addEventListener('mousemove', (event) => {
+    document.addEventListener('mousemove', (event) => {
+        //Debug('mousemove');
         if (event.button === 0 && dragging) {
+<<<<<<< Updated upstream
             console.log(event.movementX, ',', event.movementY);
             if (direction === 'horizental') {
                 const positionPercentage = olderSibling.offsetHeight / (olderSibling.offsetHeight + youngerSibling.offsetHeight) * 100;
@@ -121,6 +230,16 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
                     youngerSibling.style.width = (100 - maxPositionPercentage) + '%';
                 }
             }
+=======
+            moving(event.clientX, event.clientY);
+            event.stopImmediatePropagation();
+        }
+    });
+    document.addEventListener('touchmove', event => {
+        //Debug('touchmove');
+        if (event.touches.length === 1 && dragging) {
+            moving(event.touches[0].clientX, event.touches[0].clientY);
+>>>>>>> Stashed changes
             event.stopImmediatePropagation();
         }
     });
