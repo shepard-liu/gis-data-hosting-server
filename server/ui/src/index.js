@@ -14,12 +14,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 //Create viewDiv for map, tableDiv for feature table
 const dom_1 = require("./util/dom");
-const viewDivElement = (0, dom_1.defineElement)('div', 'viewDiv');
+const mainViewTableContainer = (0, dom_1.defineElement)('div', 'mainViewTableContainer', "view-table-container");
+const mainViewElement = (0, dom_1.defineElement)('div', 'viewDiv');
 const tableContainerElement = (0, dom_1.defineElement)('div', 'tableContainer');
-const tableDivElement = (0, dom_1.defineElement)('div', 'tableDiv');
-document.body.appendChild(viewDivElement);
-document.body.appendChild(tableContainerElement)
-    .appendChild(tableDivElement);
+const tableElement = (0, dom_1.defineElement)('div', 'tableDiv');
+const preViewElement = (0, dom_1.defineElement)('div', 'preView');
+mainViewTableContainer.appendChild(mainViewElement);
+mainViewTableContainer.appendChild(tableContainerElement)
+    .appendChild(tableElement);
+document.body.appendChild(mainViewTableContainer);
+document.body.appendChild(preViewElement);
 //-------------------------------------
 //    Import Modules
 //-------------------------------------
@@ -35,8 +39,6 @@ const dataManager_1 = require("./util/dataManager");
 const FeatureTable_1 = require("@arcgis/core/widgets/FeatureTable");
 const datasetPopup_1 = require("./widgets/popup/datasetPopup");
 const seperator_1 = require("./util/seperator");
-<<<<<<< Updated upstream
-=======
 const WebScene_1 = require("@arcgis/core/WebScene");
 const LayerList_1 = require("@arcgis/core/widgets/LayerList");
 const FeatureLayer_1 = require("@arcgis/core/layers/FeatureLayer");
@@ -48,10 +50,9 @@ const Legend_1 = require("@arcgis/core/widgets/Legend");
 const Home_1 = require("@arcgis/core/widgets/Home");
 // import { Debug, initializeDebugger } from './util/debugger';
 // initializeDebugger();
->>>>>>> Stashed changes
 // After module loaded, remove loader
 document.getElementById('loading').remove();
-viewDivElement.style.height = '100%';
+mainViewElement.style.height = '100%';
 //-----------------------------------------------
 //    Initialize Map and View before login
 //-----------------------------------------------
@@ -61,9 +62,12 @@ const map = new Map_1.default({
     basemap: "osm", // Can be accessed without api-key
 });
 const view = new SceneView_1.default({
-    container: viewDivElement,
+    container: mainViewElement,
     map: map,
     zoom: 1,
+});
+const preView = new SceneView_1.default({
+    container: preViewElement,
 });
 let featureTable;
 //-----------------------------------------------
@@ -92,15 +96,16 @@ authHelper.watch('loginStatus', (value) => __awaiter(void 0, void 0, void 0, fun
     featureTable = new FeatureTable_1.default({
         layer: datasetIndexFeatureLayer,
         view: view,
-        container: tableDivElement,
+        container: tableElement,
         fieldConfigs: dataManager_1.default.datasetIndexFields
     });
     //-------------------------------------------
     //  Create seperator bar for view and table
     //-------------------------------------------
-    document.getElementById('tableContainer').style.height = '40%';
-    document.getElementById('viewDiv').style.height = '60%';
-    (0, seperator_1.createSeperatorBar)('view-table-seperator', 'horizental-seperator', 'horizental', [viewDivElement, tableContainerElement], 20, 80, 10);
+    mainViewTableContainer.style.height = '100%';
+    tableContainerElement.style.height = '40%';
+    mainViewElement.style.height = '60%';
+    (0, seperator_1.createSeperatorBar)('view-table-seperator', 'horizental-seperator', 'horizental', [mainViewElement, tableContainerElement], 20, 80, 10);
     //-------------------------------------
     // bind view popup with feature table
     //-------------------------------------
@@ -156,8 +161,6 @@ authHelper.watch('loginStatus', (value) => __awaiter(void 0, void 0, void 0, fun
         }
         noOpenFlag = false;
     });
-<<<<<<< Updated upstream
-=======
     //--------------------------------
     //  On previewing dataset
     //--------------------------------
@@ -240,5 +243,4 @@ authHelper.watch('loginStatus', (value) => __awaiter(void 0, void 0, void 0, fun
             preView.ui.add(new Home_1.default({ view: preView }), 'top-left');
         }
     }));
->>>>>>> Stashed changes
 }));

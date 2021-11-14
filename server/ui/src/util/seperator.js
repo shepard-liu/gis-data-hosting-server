@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSeperatorBar = void 0;
+exports.moveSeperatorBar = exports.createSeperatorBar = void 0;
 const dom_1 = require("./dom");
 //import { //Debug } from './//Debugger';
 /**
@@ -31,6 +31,8 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
     const [olderSibling, youngerSibling] = siblings;
     // create bar
     const bar = (0, dom_1.defineElement)('div', id, _class);
+    // create bar hint
+    const hint = (0, dom_1.defineElement)('div', id + '-hint', _class + '-hint');
     // setting display size
     if (displaySize !== undefined) {
         if (direction === 'horizental') {
@@ -63,12 +65,8 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
     let mouseLastX = 0;
     let mouseLastY = 0;
     let dragging = false;
-<<<<<<< Updated upstream
-    // record the position when mouse is pressed down
-=======
-    // record the original size the three elements combined
-    let originalHeight = olderSibling.offsetHeight + youngerSibling.offsetHeight;
     let originalWidth = olderSibling.offsetWidth + youngerSibling.offsetWidth;
+    let originalHeight = olderSibling.offsetHeight + youngerSibling.offsetHeight;
     function moveInitialize(posX, posY) {
         dragging = true;
         mouseLastX = posX;
@@ -130,15 +128,9 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
     //----------------------------------------------------------------
     //          Move Initializer Event
     //----------------------------------------------------------------
->>>>>>> Stashed changes
     bar.addEventListener('mousedown', (event) => {
         //Debug('mousedown');
         if (event.button === 0) {
-<<<<<<< Updated upstream
-            dragging = true;
-            mouseDownX = event.clientX;
-            mouseDownY = event.clientY;
-=======
             moveInitialize(event.clientX, event.clientY);
         }
     });
@@ -147,17 +139,9 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
         if (event.touches.length > 1) {
             moveFinalize();
             return;
->>>>>>> Stashed changes
         }
         moveInitialize(event.touches[0].clientX, event.touches[0].clientY);
     });
-<<<<<<< Updated upstream
-    // reset when release mouse button
-    document.body.addEventListener('mouseup', (event) => {
-        if (event.buttons === 0) {
-            console.log(dragging);
-            dragging = false;
-=======
     //----------------------------------------------------------------
     //          Move Finalizer Event
     //----------------------------------------------------------------
@@ -165,14 +149,11 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
         //Debug('mouseup');
         if (event.buttons === 0) {
             moveFinalize();
->>>>>>> Stashed changes
         }
         else {
             event.stopImmediatePropagation();
         }
     });
-<<<<<<< Updated upstream
-=======
     // reset when mouse go out of document body
     document.addEventListener('mouseleave', (event) => {
         //Debug('mouseleave');
@@ -187,50 +168,10 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
     //----------------------------------------------------------------
     //          Move Triggering Event
     //----------------------------------------------------------------
->>>>>>> Stashed changes
     // adjust siblings when dragging
     document.addEventListener('mousemove', (event) => {
         //Debug('mousemove');
         if (event.button === 0 && dragging) {
-<<<<<<< Updated upstream
-            console.log(event.movementX, ',', event.movementY);
-            if (direction === 'horizental') {
-                const positionPercentage = olderSibling.offsetHeight / (olderSibling.offsetHeight + youngerSibling.offsetHeight) * 100;
-                if ((positionPercentage <= minPositionPercentage && event.movementY < 0) ||
-                    (positionPercentage >= maxPositionPercentage && event.movementY > 0))
-                    return;
-                // Adjust sibling
-                olderSibling.style.height = olderSibling.offsetHeight + event.movementY + 'px';
-                youngerSibling.style.height = youngerSibling.offsetHeight - event.movementY + 'px';
-                // In case that it crosses the max/min position
-                if (positionPercentage < minPositionPercentage) {
-                    olderSibling.style.height = minPositionPercentage + 1 + '%';
-                    youngerSibling.style.height = (100 - minPositionPercentage) + '%';
-                }
-                else if (positionPercentage > maxPositionPercentage) {
-                    olderSibling.style.height = maxPositionPercentage - 1 + '%';
-                    youngerSibling.style.height = (100 - maxPositionPercentage) + '%';
-                }
-            }
-            else {
-                const positionPercentage = olderSibling.offsetWidth / (olderSibling.offsetWidth + youngerSibling.offsetWidth) * 100;
-                if ((positionPercentage <= minPositionPercentage && event.movementX < 0) ||
-                    (positionPercentage >= maxPositionPercentage && event.movementX > 0))
-                    return;
-                // Adjust sibling
-                olderSibling.style.width = olderSibling.offsetWidth + event.movementX + 'px';
-                youngerSibling.style.width = youngerSibling.offsetWidth - event.movementX + 'px';
-                // In case that it crosses the max/min position
-                if (positionPercentage < minPositionPercentage) {
-                    olderSibling.style.width = minPositionPercentage + 1 + '%';
-                    youngerSibling.style.width = (100 - minPositionPercentage) + '%';
-                }
-                else if (positionPercentage > maxPositionPercentage) {
-                    olderSibling.style.width = maxPositionPercentage - 1 + '%';
-                    youngerSibling.style.width = (100 - maxPositionPercentage) + '%';
-                }
-            }
-=======
             moving(event.clientX, event.clientY);
             event.stopImmediatePropagation();
         }
@@ -239,12 +180,20 @@ function createSeperatorBar(id, _class, direction, siblings, minPositionPercenta
         //Debug('touchmove');
         if (event.touches.length === 1 && dragging) {
             moving(event.touches[0].clientX, event.touches[0].clientY);
->>>>>>> Stashed changes
             event.stopImmediatePropagation();
         }
     });
+    bar.appendChild(hint);
     // add seperator bar to DOM
     olderSibling.insertAdjacentElement('afterend', bar);
     return bar;
 }
 exports.createSeperatorBar = createSeperatorBar;
+/**
+ * Change the current postion of the seperator bar
+ * @param position in percentage. must be between the min and max point
+ *                 defined when creating the bar
+ */
+function moveSeperatorBar(position) {
+}
+exports.moveSeperatorBar = moveSeperatorBar;

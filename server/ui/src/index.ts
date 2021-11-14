@@ -5,12 +5,16 @@
 //Create viewDiv for map, tableDiv for feature table
 import { defineElement } from './util/dom';
 
-const viewDivElement = defineElement('div', 'viewDiv');
+const mainViewTableContainer = defineElement('div', 'mainViewTableContainer', "view-table-container");
+const mainViewElement = defineElement('div', 'viewDiv');
 const tableContainerElement = defineElement('div', 'tableContainer');
-const tableDivElement = defineElement('div', 'tableDiv');
-document.body.appendChild(viewDivElement);
-document.body.appendChild(tableContainerElement)
-    .appendChild(tableDivElement);
+const tableElement = defineElement('div', 'tableDiv');
+const preViewElement = defineElement('div', 'preView');
+mainViewTableContainer.appendChild(mainViewElement);
+mainViewTableContainer.appendChild(tableContainerElement)
+    .appendChild(tableElement);
+document.body.appendChild(mainViewTableContainer);
+document.body.appendChild(preViewElement);
 
 //-------------------------------------
 //    Import Modules
@@ -30,8 +34,6 @@ import FeatureTable from '@arcgis/core/widgets/FeatureTable';
 import DatasetPopup from './widgets/popup/datasetPopup';
 import { DatasetIndexGraphic } from './widgets/popup/interfaces';
 import { createSeperatorBar } from './util/seperator';
-<<<<<<< Updated upstream
-=======
 import WebScene from '@arcgis/core/WebScene';
 import LayerList from '@arcgis/core/widgets/LayerList';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
@@ -43,11 +45,10 @@ import Legend from '@arcgis/core/widgets/Legend';
 import Home from '@arcgis/core/widgets/Home';
 // import { Debug, initializeDebugger } from './util/debugger';
 // initializeDebugger();
->>>>>>> Stashed changes
 
 // After module loaded, remove loader
 document.getElementById('loading').remove();
-viewDivElement.style.height = '100%';
+mainViewElement.style.height = '100%';
 
 //-----------------------------------------------
 //    Initialize Map and View before login
@@ -61,10 +62,14 @@ const map = new EsriMap({
 });
 
 const view = new SceneView({
-    container: viewDivElement as HTMLDivElement,
+    container: mainViewElement as HTMLDivElement,
     map: map,
     zoom: 1,
 });
+
+const preView = new SceneView({
+    container: preViewElement as HTMLDivElement,
+})
 
 let featureTable: __esri.FeatureTable;
 
@@ -104,20 +109,21 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
     featureTable = new FeatureTable({
         layer: datasetIndexFeatureLayer,
         view: view,
-        container: tableDivElement,
+        container: tableElement,
         fieldConfigs: DataManager.datasetIndexFields as __esri.FieldColumnConfigProperties[]
     });
 
     //-------------------------------------------
     //  Create seperator bar for view and table
     //-------------------------------------------
-    document.getElementById('tableContainer').style.height = '40%';
-    document.getElementById('viewDiv').style.height = '60%';
+    mainViewTableContainer.style.height = '100%';
+    tableContainerElement.style.height = '40%';
+    mainViewElement.style.height = '60%';
     createSeperatorBar(
         'view-table-seperator',
         'horizental-seperator',
         'horizental',
-        [viewDivElement, tableContainerElement],
+        [mainViewElement, tableContainerElement],
         20, 80,
         10
     );
@@ -183,8 +189,6 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
 
         noOpenFlag = false;
     });
-<<<<<<< Updated upstream
-=======
 
     //--------------------------------
     //  On previewing dataset
@@ -292,5 +296,4 @@ authHelper.watch('loginStatus', async (value: 'inProgress' | 'finished') => {
         }
 
     }));
->>>>>>> Stashed changes
 });
